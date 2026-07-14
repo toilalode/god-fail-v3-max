@@ -1,0 +1,2728 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>GOD HUNTER V3 MAX — ATOMIC WAR</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#020005">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="God Hunter MAX">
+<link rel="apple-touch-icon" href="icons/icon-180.png">
+<link rel="icon" href="icons/icon-192.png">
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('sw.js', { scope: './' }).catch(()=>{});
+    });
+  }
+</script>
+</head>
+<body style="width:100%; height:100%; overflow:hidden; background-color:#020005; font-family:'Courier New', Courier, monospace; margin:0; padding:0; touch-action:none; user-select:none; -webkit-user-select:none;">
+
+<canvas id="gameCanvas" style="display:block; position:fixed; top:0; left:0; width:100%; height:100%; z-index:1;"></canvas>
+
+<!-- BANNER THÔNG BÁO HỆ THỐNG -->
+<div id="systemAlert" style="position:fixed; top:18%; left:50%; transform:translateX(-50%); background:rgba(255,0,0,0.9); color:#fff; padding:10px 20px; border:2px solid #ff3333; border-radius:6px; font-weight:bold; font-size:13px; z-index:999; pointer-events:none; display:none; text-shadow:0 0 5px #000; text-align:center;"></div>
+
+<!-- ===== 💀 ADMIN PANEL (phím ~) ===== -->
+<div id="hackPanel" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); z-index:9800; background:rgba(5,0,10,0.98); border:2px solid #ff0000; border-radius:14px; padding:16px 14px; min-width:320px; max-width:95vw; max-height:90vh; overflow-y:auto; box-shadow:0 0 40px #ff000088;">
+  <div style="color:#ff0000; font-weight:900; font-size:16px; text-align:center; margin-bottom:12px; letter-spacing:3px; text-shadow:0 0 15px #ff0000;">☠️ ADMIN PANEL [~]</div>
+  <div style="display:grid; grid-template-columns:1fr 1fr; gap:7px;">
+    <button onclick="openScreenPopup()" style="padding:9px 6px; border-radius:7px; border:2px solid #44ccff; background:rgba(0,170,255,0.1); color:#99ddff; font-weight:bold; font-size:11px; cursor:pointer;">🖥️ MÀN HÌNH<br><span style="font-size:9px; color:#aaa;">Toàn màn hình / Chế độ Desktop</span></button>
+    <button id="hkBtn_godmode" onclick="hackToggle('godmode')" style="padding:9px 6px; border-radius:7px; border:2px solid #ffcc00; background:rgba(255,204,0,0.1); color:#ffee88; font-weight:bold; font-size:11px; cursor:pointer;">✨ GOD MODE<br><span style="font-size:9px; color:#888;">TẮT</span></button>
+    <button onclick="hackAction('fillbars')" style="padding:9px 6px; border-radius:7px; border:2px solid #00ffaa; background:rgba(0,255,170,0.1); color:#88ffdd; font-weight:bold; font-size:11px; cursor:pointer;">⚛️ ĐẦY RAGE<br><span style="font-size:9px; color:#aaa;">Click 1 lần</span></button>
+    <button id="hkBtn_infrage" onclick="hackToggle('infrage')" style="padding:9px 6px; border-radius:7px; border:2px solid #0088ff; background:rgba(0,100,255,0.1); color:#66aaff; font-weight:bold; font-size:11px; cursor:pointer;">🔁 2 RAGE ĐẦY<br><span style="font-size:9px; color:#888;">TẮT</span></button>
+    <button onclick="hackAction('maxdmg')" style="padding:9px 6px; border-radius:7px; border:2px solid #ff6600; background:rgba(255,100,0,0.1); color:#ffaa66; font-weight:bold; font-size:11px; cursor:pointer;">🔥 DMG x1000 (STACK)<br><span style="font-size:9px; color:#aaa;" id="dmgStackLabel">Hiện tại: x1</span></button>
+    <button onclick="hackAction('resetdmgstack')" style="padding:9px 6px; border-radius:7px; border:2px solid #888888; background:rgba(120,120,120,0.12); color:#cccccc; font-weight:bold; font-size:11px; cursor:pointer;">🚫 TẮT DMG x1000<br><span style="font-size:9px; color:#aaa;">Reset về x1</span></button>
+    <button id="hkBtn_autokill" onclick="hackToggle('autokill')" style="padding:9px 6px; border-radius:7px; border:2px solid #ff00ff; background:rgba(255,0,255,0.1); color:#ff88ff; font-weight:bold; font-size:11px; cursor:pointer;">☠️ AUTO KILL<br><span style="font-size:9px; color:#888;">TẮT</span></button>
+    <button id="hkBtn_freeze" onclick="hackToggle('freeze')" style="padding:9px 6px; border-radius:7px; border:2px solid #00eeff; background:rgba(0,200,255,0.08); color:#88eeff; font-weight:bold; font-size:11px; cursor:pointer;">🧊 ĐÓNG BĂNG ALL<br><span style="font-size:9px; color:#888;">TẮT</span></button>
+    <button id="hkBtn_infhp" onclick="hackToggle('infhp')" style="padding:9px 6px; border-radius:7px; border:2px solid #00ffff; background:rgba(0,255,255,0.08); color:#88ffff; font-weight:bold; font-size:11px; cursor:pointer;">💎 HP LUÔN ĐẦY<br><span style="font-size:9px; color:#888;">TẮT</span></button>
+    <button onclick="hackAction('maxkills')" style="padding:9px 6px; border-radius:7px; border:2px solid #ffff00; background:rgba(255,255,0,0.08); color:#ffff88; font-weight:bold; font-size:11px; cursor:pointer;">🏆 +999 KILLS<br><span style="font-size:9px; color:#aaa;">Click 1 lần</span></button>
+    <button id="hkBtn_autoskillopen" onclick="openAutoSkillPopup()" style="padding:9px 6px; border-radius:7px; border:2px solid #33ff77; background:rgba(50,255,120,0.08); color:#99ffbb; font-weight:bold; font-size:10px; cursor:pointer;">🤖 AUTO USE SKILL<br><span style="font-size:8px; color:#888;" id="autoSkillStatusLabel">TẮT — bấm để mở cấu hình</span></button>
+    <button id="hkBtn_sysopen" onclick="toggleSystemPanel()" style="padding:9px 6px; border-radius:7px; border:2px solid #44ccff; background:rgba(0,170,255,0.08); color:#99ddff; font-weight:bold; font-size:10px; cursor:pointer;">💾 LƯU/TREO<br><span style="font-size:8px; color:#888;">Mở bảng Lưu / Treo máy</span></button>
+    <button onclick="hackAction('resetall')" style="padding:9px 6px; border-radius:7px; border:2px solid #888888; background:rgba(100,100,100,0.15); color:#dddddd; font-weight:bold; font-size:11px; cursor:pointer; grid-column:1/3;">🔄 RESET ALL ADMIN<br><span style="font-size:9px; color:#aaa;">Click 1 lần</span></button>
+  </div>
+  <div style="margin-top:10px; background:rgba(255,255,255,0.04); border-radius:6px; padding:8px;">
+    <div style="color:#ffcc00; font-size:10px; font-weight:bold; margin-bottom:5px;">🎚️ MULTIPLIER SÁT THƯƠNG: <span id="hackDmgMult">1</span>x</div>
+    <input type="range" min="1" max="1000" value="1" id="hackDmgSlider" oninput="hackSetDmgMult(this.value)" style="width:100%; accent-color:#ff4444;">
+  </div>
+  <div style="margin-top:8px; background:rgba(255,255,255,0.04); border-radius:6px; padding:8px;">
+    <div style="color:#00ff88; font-size:10px; font-weight:bold; margin-bottom:5px;">⚡ MULTIPLIER TỐC ĐỘ: <span id="hackSpeedMult">1</span>x</div>
+    <input type="range" min="1" max="50" value="1" id="hackSpeedSlider" oninput="hackSetSpeedMult(this.value)" style="width:100%; accent-color:#00ff88;">
+  </div>
+  <div style="margin-top:10px; background:rgba(255,0,0,0.05); border:1px solid #ff333355; border-radius:6px; padding:8px;">
+    <div style="color:#ff5555; font-size:10px; font-weight:bold; margin-bottom:5px;">⌨️ ADMIN COMMAND LINE</div>
+    <div style="display:flex; gap:6px;">
+      <input type="text" id="adminCmdInput" placeholder="vd: /autoskill on ZXV 0.3 inf" style="flex:1; min-width:0; padding:7px 8px; border-radius:5px; border:1px solid #ff444477; background:rgba(0,0,0,0.5); color:#fff; font-size:11px; font-family:'Courier New',monospace;" onkeydown="if(event.key==='Enter'){runAdminCommand(); event.preventDefault();}">
+      <button onclick="runAdminCommand()" style="padding:7px 12px; border-radius:5px; border:1px solid #ff4444; background:rgba(255,0,0,0.25); color:#ff8888; font-weight:bold; font-size:11px; cursor:pointer;">ENTER</button>
+    </div>
+    <div id="adminCmdOutput" style="margin-top:6px; max-height:90px; overflow-y:auto; font-size:9px; color:#88ff88; line-height:1.5; white-space:pre-wrap;"></div>
+  </div>
+  <button onclick="document.getElementById('hackPanel').style.display='none'" style="margin-top:10px; width:100%; padding:7px; border-radius:6px; border:1px solid #555; background:rgba(80,0,0,0.5); color:#aaa; font-size:11px; cursor:pointer;">✖ Đóng (hoặc nhấn ~)</button>
+</div>
+
+<div id="popupSystem" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); z-index:9800; background:rgba(2,8,20,0.98); border:2px solid #00aaff; border-radius:14px; padding:16px 14px; min-width:300px; max-width:92vw; box-shadow:0 0 30px #00aaff88;">
+  <div style="color:#00aaff; font-weight:900; font-size:15px; text-align:center; margin-bottom:14px; letter-spacing:2px; text-shadow:0 0 10px #00aaff;">💾 LƯU FILE / TREO MÁY</div>
+  <div style="display:flex; flex-direction:column; gap:9px;">
+    <button onclick="manualSaveProgress()" style="padding:11px 10px; border-radius:8px; border:2px solid #00ff88; background:rgba(0,255,136,0.1); color:#88ffcc; font-weight:bold; font-size:13px; cursor:pointer; text-align:left;">💾 LƯU FILE — Lưu Kill &amp; tiến trình</button>
+    <button onclick="deleteSaveProgress()" style="padding:11px 10px; border-radius:8px; border:2px solid #ff4444; background:rgba(255,68,68,0.1); color:#ff9999; font-weight:bold; font-size:13px; cursor:pointer; text-align:left;">🗑️ XÓA SAVE — Xóa dữ liệu đã lưu</button>
+    <button id="sysBtn_hangMachine" onclick="toggleHangMachine()" style="padding:11px 10px; border-radius:8px; border:2px solid #aa66ff; background:rgba(150,80,255,0.1); color:#cc99ff; font-weight:bold; font-size:13px; cursor:pointer; text-align:left;">🌑 TỰ ĐỘNG TREO MÁY<br><span style="font-size:9px; color:#888;">TẮT</span></button>
+    <button onclick="closePopup('popupSystem')" style="padding:8px; border-radius:6px; border:1px solid #555; background:rgba(0,40,80,0.5); color:#aaa; font-size:11px; cursor:pointer;">✖ Đóng</button>
+  </div>
+</div>
+
+<div id="popupBackdrop" onclick="closeAllPopups()" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.55); z-index:850;"></div>
+
+<div id="hangMachineOverlay" onclick="toggleHangMachine()" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:#000; z-index:9999; cursor:pointer; align-items:center; justify-content:center; flex-direction:column;">
+  <div style="color:#222; font-size:11px; font-family:'Courier New',monospace; text-align:center; opacity:0.5;">💤 Đang treo máy — game vẫn chạy ngầm<br>(chạm màn hình để bật sáng lại)</div>
+</div>
+
+
+<!-- ===== HUD TRÊN CÙNG (flex-wrap thật — không đè lên nhau, tự xuống dòng nếu màn nhỏ) ===== -->
+<div id="hudTopRow" style="position:fixed; top:8px; left:8px; right:8px; display:flex; flex-wrap:wrap; justify-content:space-between; align-items:flex-start; gap:6px; z-index:100; pointer-events:none;">
+  <div id="hudHpPanel" style="background:rgba(10,5,25,0.85); border:1px solid #4d26b3; padding:8px; border-radius:6px; min-width:170px; pointer-events:auto; display:flex; flex-direction:column; gap:4px;">
+    <div style="color:#00ffff; font-size:11px; font-weight:bold;">HP: <span id="hpText">10000</span>/<span style="color:#aaffff">10000</span></div>
+    <div style="width:100%; height:9px; background:#221133; border:1px solid #553377; border-radius:3px; overflow:hidden;">
+      <div id="hpBar" style="width:100%; height:100%; background:linear-gradient(90deg, #ff0055, #ff5500);"></div>
+    </div>
+    <div id="shieldRow" style="color:#66eeff; font-size:10px; font-weight:bold; visibility:hidden;">🛡️✨ GIÁP ẢO: <span id="shieldText">0</span> (chặn hết sát thương tới khi cạn)</div>
+    <div style="color:#ff6600; font-size:10px; font-weight:bold;">🔥 CHIẾN Ý (Rage 1): <span id="rage1Text">0</span>%</div>
+    <div style="width:100%; height:7px; background:#0a0a33; border:1px solid #334488; border-radius:3px; overflow:hidden;">
+      <div id="rage1Bar" style="width:0%; height:100%; background:linear-gradient(90deg, #ff6600, #ffcc00); transition:width 0.1s;"></div>
+    </div>
+    <div style="color:#00ffaa; font-size:10px; font-weight:bold;">☢️ NĂNG LƯỢNG HẠT NHÂN (Rage 2): <span id="rage2Text">0</span>%</div>
+    <div style="width:100%; height:7px; background:#0a0a33; border:1px solid #334488; border-radius:3px; overflow:hidden;">
+      <div id="rage2Bar" style="width:0%; height:100%; background:linear-gradient(90deg, #00ffaa, #ff00ff); transition:width 0.1s;"></div>
+    </div>
+    <div style="color:#ffcc00; font-size:10px; font-weight:bold;">KILLS: <span id="killText">0</span></div>
+    <button id="toggleONuclearBtn" onclick="toggleNuclearPassive()" disabled style="margin-top:3px; background:#1a5c2a; border:none; color:#77ff99; font-size:8px; font-weight:bold; padding:4px; border-radius:3px; cursor:not-allowed;">[O] KHỐNG CHẾ PHÓNG XẠ: KHÓA</button>
+  </div>
+
+  <div id="hudBossPanel" style="display:flex; flex-direction:column; gap:5px; width:220px; max-width:46vw; pointer-events:none; background:rgba(0,0,0,0.6); padding:7px; border-radius:6px; border:1px solid #ff3333;">
+    <div>
+      <div style="color:#ff3333; font-size:10px; font-weight:bold; display:flex; justify-content:space-between;"><span>👹 BOSS</span> <span id="bossHpText">50000/50000</span></div>
+      <div style="width:100%; height:7px; background:#330000; border-radius:2px; overflow:hidden; margin-top:2px;"><div id="bossBar" style="width:100%; height:100%; background:#ff3333; transition:width 0.1s;"></div></div>
+    </div>
+    <div>
+      <div style="color:#ffdd00; font-size:10px; font-weight:bold; display:flex; justify-content:space-between;"><span>👾 5 QUÁI (tổng)</span> <span id="mobsHpText">10000/10000</span></div>
+      <div style="width:100%; height:5px; background:#332200; border-radius:2px; overflow:hidden; margin-top:2px;"><div id="mobsBar" style="width:100%; height:100%; background:#ffdd00; transition:width 0.1s;"></div></div>
+    </div>
+    <div style="color:#00ff00; font-size:8px; text-align:center; font-style:italic;">Quái hồi sinh sau 5 giây</div>
+    <!-- TAB dời xuống ngay dưới HUD máu Boss/Quái — chiều dài (width) khớp 100% theo panel này (co giãn
+         theo max-width:46vw như panel cha), chiều rộng (height) giảm bớt so với trước (32px -> 24px) -->
+    <button onclick="toggleTabHelp()" id="btnTab" style="pointer-events:auto; width:100%; height:24px; background:#0a0a1a; border:2px solid #00ffcc; color:#00ffcc; font-weight:bold; border-radius:7px; font-size:11px; cursor:pointer; box-shadow:0 0 8px #00ffcc55;">TAB</button>
+  </div>
+
+  <div id="hudBadges" style="display:flex; flex-direction:column; gap:4px; align-items:flex-end; pointer-events:none;">
+    <div id="hackPanelToggleBtn" onclick="toggleHackPanel()" style="pointer-events:auto; background:linear-gradient(135deg,#ff0000,#880000); border:2px solid #ff4444; color:#fff; font-weight:900; font-size:10px; padding:4px 10px; border-radius:7px; cursor:pointer; box-shadow:0 0 10px #ff000066; letter-spacing:0.5px; white-space:nowrap;">☠️ ADMIN [~]</div>
+    <div id="timePanelToggleBtn" onclick="showTimePopup()" style="pointer-events:auto; background:linear-gradient(135deg,#ffaa00,#664400); border:2px solid #ffcc44; color:#fff; font-weight:900; font-size:10px; padding:4px 10px; border-radius:7px; cursor:pointer; box-shadow:0 0 10px #ffaa0066; letter-spacing:0.5px; white-space:nowrap;">🕐 THỜI GIAN</div>
+    <div id="badgeForm" style="padding:4px 10px; background:rgba(255,204,0,0.2); border:1px solid #ffcc00; color:#ffcc00; font-weight:bold; font-size:11px; border-radius:4px; white-space:nowrap;">FORM: THƯỜNG</div>
+    <div id="badgeWeapon" style="padding:4px 10px; background:rgba(255,170,0,0.15); border:1px solid #ffaa00; color:#ffaa00; font-weight:bold; font-size:11px; border-radius:4px; white-space:nowrap;">VŨ KHÍ: KIẾM</div>
+    <div id="badgeMode" style="padding:4px 10px; background:rgba(238,130,238,0.15); border:1px solid #ee82ee; color:#ee82ee; font-weight:bold; font-size:10px; border-radius:4px; white-space:nowrap;">CHẾ ĐỘ: THƯỜNG</div>
+  </div>
+</div>
+
+<div id="combatLog" style="position:fixed; top:300px; left:90px; width:220px; max-height:130px; overflow:hidden; display:flex; flex-direction:column-reverse; gap:4px; z-index:90; pointer-events:none;"></div>
+
+<!-- JOYSTICK -->
+<div id="joyZone" style="position:fixed; bottom:70px; left:70px; width:110px; height:110px; background:rgba(255,255,255,0.07); border:2px solid rgba(255,255,255,0.3); border-radius:50%; z-index:200; touch-action:none;">
+  <div id="joyKnob" style="width:38px; height:38px; background:linear-gradient(135deg, #ffaa00, #9945ff); border:1px solid #fff; border-radius:50%; position:absolute; top:50%; left:50%; transform:translate(-50%, -50%);"></div>
+</div>
+
+<!-- CỘT TRÁI: F1, F2, W3, D4 — vị trí do JS tự tính để không đè HUD/joystick/skill bar -->
+<div id="leftBtnCol" style="position:fixed; left:22px; top:300px; z-index:200; display:flex; flex-direction:column; gap:8px; align-items:center;">
+  <button id="btnF1" onclick="skillG()" style="width:58px; height:48px; background:#0a0a1a; border:2px solid #aa66ff; color:#cc99ff; font-weight:bold; border-radius:8px; font-size:9.5px; line-height:1.15; cursor:pointer; box-shadow:0 0 8px #aa66ff55; padding:2px; overflow:visible; box-sizing:border-box;">Robot<br>Form</button>
+  <button id="btnF2" onclick="skillP()" style="width:58px; height:48px; background:#0a0a1a; border:2px solid #ff33cc; color:#ff88ee; font-weight:bold; border-radius:8px; font-size:9.5px; line-height:1.15; cursor:pointer; box-shadow:0 0 8px #ff33cc55; padding:2px; overflow:visible; box-sizing:border-box;">Nuclear<br>Form</button>
+  <button id="btnW3" onclick="openWeaponPopup()" style="width:58px; height:48px; background:#0a0a1a; border:2px solid #ccaa00; color:#eecc33; font-weight:bold; border-radius:8px; font-size:9.5px; line-height:1.15; cursor:pointer; box-shadow:0 0 8px #ccaa0055; padding:2px; overflow:visible; box-sizing:border-box;">Đổi<br>Vũ Khí</button>
+  <button id="btnD4" onclick="performSelfDestruct(false)" style="width:58px; height:48px; background:#0a0a1a; border:2px solid #ff3333; color:#ff5555; font-weight:bold; border-radius:8px; font-size:9.5px; line-height:1.15; cursor:pointer; box-shadow:0 0 8px #ff333355; padding:2px; overflow:visible; box-sizing:border-box;">Bom<br>Tự Hủy</button>
+</div>
+
+<!-- CỘT PHẢI: Jump(↑), M1, M2, M3(=Q Dash), E — vị trí do JS tự tính (TAB đã dời lên cụm badges góc phải trên) -->
+<div id="rightBtnCol" style="position:fixed; right:20px; top:260px; z-index:200; display:flex; flex-direction:column; gap:10px; align-items:center;">
+  <button id="btnJump" style="width:66px; height:50px; border-radius:8px; background:#0a2a1a; border:2px solid #00ff88; color:#00ff88; font-weight:bold; font-size:17px; cursor:pointer;">↑</button>
+  <button id="btnM1" style="width:66px; height:50px; border-radius:8px; background:radial-gradient(circle,#aa3333,#330000); border:2px solid #ff5555; color:#ffcccc; font-weight:bold; font-size:13px; cursor:pointer;">M1</button>
+  <button id="btnM2" style="width:66px; height:50px; border-radius:8px; background:radial-gradient(circle,#886600,#332200); border:2px solid #ffaa00; color:#ffdd88; font-weight:bold; font-size:13px; cursor:pointer;">M2</button>
+  <button id="btnM3" style="width:66px; height:50px; border-radius:8px; background:radial-gradient(circle,#553388,#221133); border:2px solid #aa66ff; color:#ddbbff; font-weight:bold; font-size:13px; cursor:pointer;">Q</button>
+  <button id="btnBlock" style="width:66px; height:50px; border-radius:8px; background:#0a1a2a; border:2px solid #3388ff; color:#88ccff; font-weight:bold; font-size:13px; cursor:pointer;">E<br><span style="font-size:8px;">BLOCK</span></button>
+</div>
+
+<!-- THANH KỸ NĂNG: R T Y U (khóa cho tới khi mở Kiếm&Súng) | K | Z X C V (luôn hiện) | B N M J (chỉ Kiếm&Súng) | F -->
+<div id="skillBarNormal" style="position:fixed; left:50%; bottom:8px; transform:translateX(-50%); z-index:200; display:flex; gap:4px; align-items:center; max-width:98vw; overflow-x:auto;">
+  <span id="rtyuGroup" style="display:none; gap:4px;">
+  <button onclick="castSkill('R')" class="skbtn2" id="btnSkillR">R<br><span class="sklbl" id="lblLockR">Khóa</span></button>
+  <button onclick="castSkill('T')" class="skbtn2" id="btnSkillT">T<br><span class="sklbl" id="lblLockT">Khóa</span></button>
+  <button onclick="castSkill('Y')" class="skbtn2" id="btnSkillY">Y<br><span class="sklbl" id="lblLockY">Khóa</span></button>
+  <button onclick="castSkill('U')" class="skbtn2" id="btnSkillU">U<br><span class="sklbl" id="lblLockU">Khóa</span></button>
+  </span>
+  <button onclick="castSkill('K')" class="skbtn" style="border-color:#ff00ff; box-shadow:0 0 10px #ff00ff;">K<br><span class="sklbl">BOMB</span></button>
+  <button onclick="castSkill('Z')" class="skbtn">Z<br><span class="sklbl">Xả Đạn</span></button>
+  <button onclick="castSkill('X')" class="skbtn">X<br><span class="sklbl">Đấm Kéo</span></button>
+  <button onclick="castSkill('C')" class="skbtn">C<br><span class="sklbl">Nhện Nổ</span></button>
+  <button onclick="castSkill('V')" class="skbtn">V<br><span class="sklbl">Đại Nổ</span></button>
+  <span id="zxcvGroup" style="display:flex; gap:5px;">
+  <button onclick="castSkill('B')" class="skbtn2">B<br><span class="sklbl">Chém+Bắn</span></button>
+  <button onclick="castSkill('N')" class="skbtn2">N<br><span class="sklbl">Chém Kéo</span></button>
+  <button onclick="castSkill('M')" class="skbtn2">M<br><span class="sklbl">Phóng Kiếm</span></button>
+  <button onclick="castSkill('J')" class="skbtn2">J<br><span class="sklbl">Chém Tích</span></button>
+  </span>
+  <button id="btnSkillF" class="skbtn" style="border-color:#ff5500;">F<br><span class="sklbl">Phun Lửa (giữ)</span></button>
+</div>
+
+<style>
+.skbtn { width:36px; height:38px; background:rgba(0,0,0,0.8); border:1px solid #555; border-radius:6px; color:#ffaa00; font-weight:bold; font-size:10.5px; cursor:pointer; display:flex; flex-direction:column; align-items:center; justify-content:center; flex-shrink:0; }
+.sklbl { font-size:5.5px; color:#bbb; font-weight:normal; }
+.skbtn2 { width:32px; height:34px; background:rgba(40,0,40,0.85); border:1px solid #ff45b5; border-radius:6px; color:#ff88dd; font-weight:bold; font-size:9.5px; cursor:pointer; display:flex; flex-direction:column; align-items:center; justify-content:center; flex-shrink:0; }
+.skbtn2:disabled { opacity:0.35; cursor:not-allowed; }
+/* Chế độ Desktop: khung chiêu gọn lại (khoảng cách hẹp hơn) nhưng từng nút phím to hơn một chút cho dễ bấm/nhìn */
+body.desktop-mode #skillBarNormal { gap:6px; }
+body.desktop-mode .skbtn { width:58px; height:60px; font-size:21px; }
+body.desktop-mode .skbtn2 { width:53px; height:55px; font-size:19px; }
+body.desktop-mode .sklbl { font-size:7.5px; }
+</style>
+
+<!-- POPUP CHỌN VŨ KHÍ (W3 / H) -->
+<div id="popupWeapon" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); z-index:9800; background:rgba(10,5,0,0.98); border:2px solid #ffaa00; border-radius:14px; padding:16px 14px; min-width:260px; max-width:92vw; box-shadow:0 0 30px #ffaa0088;">
+  <div style="color:#ffaa00; font-weight:900; font-size:15px; text-align:center; margin-bottom:12px; letter-spacing:2px; text-shadow:0 0 10px #ffaa00;">🔄 CHỌN VŨ KHÍ</div>
+  <div style="color:#888; font-size:10px; text-align:center; margin-bottom:10px;">Dùng <b>W</b> / <b>S</b> để chọn, <b>Enter</b> để xác nhận</div>
+  <div id="weaponOptionList" style="display:flex; flex-direction:column; gap:8px;"></div>
+  <button onclick="closeWeaponPopup()" style="margin-top:12px; width:100%; padding:8px; border-radius:6px; border:1px solid #555; background:rgba(80,50,0,0.5); color:#aaa; font-size:11px; cursor:pointer;">✖ Đóng (Esc)</button>
+</div>
+
+<!-- POPUP THOI GIAN -->
+<div id="popupTime" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); z-index:9800; background:rgba(10,8,0,0.98); border:2px solid #ffaa00; border-radius:14px; padding:18px 16px; min-width:280px; max-width:92vw; box-shadow:0 0 30px #ffaa0088; font-family:monospace; text-align:center;">
+  <div style="color:#ffaa00; font-weight:900; font-size:15px; margin-bottom:10px; letter-spacing:2px; text-shadow:0 0 10px #ffaa00;">🕐 THỜI GIAN HỆ THỐNG</div>
+  <div id="timeClockDisplay" style="font-size:30px; color:#fff; font-weight:bold; margin-bottom:4px; letter-spacing:2px;">--:--:--</div>
+  <div id="timeSubSecDisplay" style="font-size:14px; color:#ffaa66; font-weight:bold; margin-bottom:4px; letter-spacing:1px;">ms --- · µs --- · ns ---</div>
+  <div style="display:flex; align-items:center; justify-content:center; gap:6px; margin-bottom:10px;">
+    <span id="timeTickDot" class="tick-dot"></span>
+    <span style="color:#886; font-size:9px; letter-spacing:1px; color:#998;">TICK MỖI GIÂY · ms/µs/ns CHẠY LIÊN TỤC</span>
+  </div>
+  <div id="timeDateDisplay" style="font-size:13px; color:#ffdd88; margin-bottom:6px;">-- , Ngày -- / Tháng -- / Năm ----</div>
+  <div id="timeLunarDisplay" style="font-size:13px; color:#88ffcc; margin-bottom:8px;">🌙 Âm lịch: Ngày -- / Tháng -- / Năm ----</div>
+  <div style="border-top:1px solid #554400; margin:8px 0; padding-top:8px;">
+    <div id="timeMoonPhaseDisplay" style="font-size:13px; color:#ffe999; margin-bottom:5px;">🌙 Tuần trăng: --</div>
+    <div id="timeTideDisplay" style="font-size:12px; color:#66ddff;">🌊 Thủy triều: --</div>
+    <div style="font-size:9px; color:#776; margin-top:4px; font-style:italic;">(Ước tính theo ngày Âm lịch — quy luật con nước dân gian, chỉ mang tính tham khảo trong game)<br>(ms chính xác thật; µs/ns chỉ mang tính minh họa vì trình duyệt giới hạn độ chính xác đồng hồ ở mức khoảng 1ms)</div>
+  </div>
+  <button onclick="closeTimePopup()" style="margin-top:12px; width:100%; padding:8px; border-radius:6px; border:1px solid #555; background:rgba(80,60,0,0.5); color:#aaa; font-size:11px; cursor:pointer;">✖ Đóng</button>
+</div>
+<style>
+.tick-dot{ display:inline-block; width:8px; height:8px; border-radius:50%; background:#ffcc00; box-shadow:0 0 6px #ffcc00; }
+@keyframes tickPulse{ 0%{ transform:scale(1); opacity:1; } 50%{ transform:scale(1.7); opacity:0.45; } 100%{ transform:scale(1); opacity:1; } }
+.tick-pulse{ animation: tickPulse 0.4s ease-out; }
+</style>
+
+<!-- POPUP MÀN HÌNH (Toàn màn hình / Chế độ Desktop) -->
+<div id="popupScreen" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); z-index:9800; background:rgba(5,10,15,0.98); border:2px solid #44ccff; border-radius:14px; padding:18px 16px; min-width:280px; max-width:92vw; box-shadow:0 0 30px #44ccff88; font-family:monospace; text-align:center;">
+  <div style="color:#44ccff; font-weight:900; font-size:15px; margin-bottom:14px; letter-spacing:2px; text-shadow:0 0 10px #44ccff;">🖥️ MÀN HÌNH</div>
+  <button id="btnFullscreenMode" onclick="toggleFullscreenMode()" style="width:100%; padding:12px; border-radius:8px; border:2px solid #00ffaa; background:rgba(0,255,170,0.1); color:#88ffdd; font-weight:bold; font-size:13px; cursor:pointer; margin-bottom:10px;">⛶ TOÀN MÀN HÌNH<br><span style="font-size:10px; color:#888;" id="fullscreenStatusLabel">TẮT</span></button>
+  <button id="btnDesktopMode" onclick="toggleDesktopMode()" style="width:100%; padding:12px; border-radius:8px; border:2px solid #ffaa00; background:rgba(255,170,0,0.1); color:#ffdd88; font-weight:bold; font-size:13px; cursor:pointer;">🖥️ CHẾ ĐỘ DESKTOP<br><span style="font-size:10px; color:#888;" id="desktopModeStatusLabel">TẮT</span></button>
+  <div style="font-size:9px; color:#667; margin-top:10px; font-style:italic;">(Chế độ Desktop giả lập màn hình rộng — giúp xem giao diện như trên máy tính, có thể cần zoom/kéo ngang)</div>
+  <button onclick="closeScreenPopup()" style="margin-top:12px; width:100%; padding:8px; border-radius:6px; border:1px solid #555; background:rgba(0,60,80,0.5); color:#aaa; font-size:11px; cursor:pointer;">✖ Đóng</button>
+</div>
+
+<!-- POPUP AUTO USE SKILL (Admin Panel) -->
+<div id="popupAutoSkill" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); z-index:9800; background:rgba(5,15,10,0.98); border:2px solid #33ff77; border-radius:14px; padding:16px 14px; min-width:280px; max-width:92vw; max-height:88vh; overflow-y:auto; box-shadow:0 0 30px #33ff7788;">
+  <div style="color:#33ff77; font-weight:900; font-size:15px; text-align:center; margin-bottom:10px; letter-spacing:2px; text-shadow:0 0 10px #33ff77;">🤖 AUTO USE SKILL</div>
+  <div style="color:#888; font-size:10px; text-align:center; margin-bottom:10px;">Chọn (các) chiêu sẽ tự động lặp lại theo vòng</div>
+  <div id="autoSkillCheckboxes" style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:6px; margin-bottom:12px;"></div>
+  <div style="margin-bottom:10px;">
+    <label style="color:#ffcc00; font-size:11px; font-weight:bold;">⏱️ Delay dùng chiêu tiếp theo (giây) — mặc định 0, tối đa 1.5</label>
+    <input type="number" id="autoSkillDelayInput" value="0" min="0" max="1.5" step="0.1" style="width:100%; margin-top:5px; padding:7px 8px; border-radius:5px; border:1px solid #33ff7777; background:rgba(0,0,0,0.5); color:#fff; font-size:12px;">
+  </div>
+  <div style="margin-bottom:10px;">
+    <label style="color:#ffcc00; font-size:11px; font-weight:bold;">⏳ Giữ chiêu trong (giây) — mặc định 0, tối đa tùy ý</label>
+    <input type="number" id="autoSkillHoldInput" value="0" min="0" step="0.1" style="width:100%; margin-top:5px; padding:7px 8px; border-radius:5px; border:1px solid #33ff7777; background:rgba(0,0,0,0.5); color:#fff; font-size:12px;">
+    <label style="display:flex; align-items:center; gap:6px; margin-top:7px; color:#99ffcc; font-size:11px; font-weight:bold; cursor:pointer;">
+      <input type="checkbox" id="autoSkillHoldInfinite" onchange="onAutoSkillInfiniteToggle()" style="accent-color:#33ff77; width:16px; height:16px;">
+      ♾️ Giữ VÔ HẠN (không cần nhập số — tự thả khi bạn bấm DỪNG)
+    </label>
+  </div>
+  <div style="display:flex; gap:8px;">
+    <button id="autoSkillStartBtn" onclick="startAutoSkill()" style="flex:1; padding:9px; border-radius:6px; border:2px solid #33ff77; background:rgba(50,255,120,0.15); color:#99ffbb; font-weight:bold; font-size:12px; cursor:pointer;">▶ BẮT ĐẦU</button>
+    <button id="autoSkillStopBtn" onclick="stopAutoSkill()" style="flex:1; padding:9px; border-radius:6px; border:2px solid #ff4444; background:rgba(255,50,50,0.15); color:#ff9999; font-weight:bold; font-size:12px; cursor:pointer;">⏹ DỪNG</button>
+  </div>
+  <button onclick="closeAutoSkillPopup()" style="margin-top:10px; width:100%; padding:8px; border-radius:6px; border:1px solid #555; background:rgba(30,50,40,0.5); color:#aaa; font-size:11px; cursor:pointer;">✖ Đóng</button>
+</div>
+
+<!-- TAB HELP OVERLAY -->
+<div id="tabHelp" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(3,0,15,0.97); z-index:9999; overflow-y:auto; padding:20px; box-sizing:border-box;">
+  <div style="max-width:900px; margin:0 auto; color:#fff; font-family:monospace;">
+    <div style="text-align:center; margin-bottom:20px;">
+      <h1 style="color:#ffcc00; font-size:22px; text-shadow:0 0 15px #ffcc00; margin:0;">⌨️ GOD HUNTER V4 — HƯỚNG DẪN</h1>
+      <p style="color:#888; font-size:11px; margin:5px 0;">Nhấn TAB hoặc chạm bất kỳ đâu để đóng</p>
+    </div>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; font-size:12px;">
+      <div style="background:rgba(255,255,255,0.05); border:1px solid #333; border-radius:8px; padding:14px;">
+        <div style="color:#00ffff; font-weight:bold; margin-bottom:10px; font-size:13px;">🎮 DI CHUYỂN & CƠ BẢN</div>
+        <div style="display:grid; grid-template-columns:90px 1fr; gap:5px; line-height:1.8;">
+          <span style="color:#ffcc00;">A / D</span><span style="color:#ccc;">Di chuyển trái / phải</span>
+          <span style="color:#ffcc00;">Space</span><span style="color:#ccc;">Nhảy</span>
+          <span style="color:#ffcc00;">M1 (giữ)</span><span style="color:#ccc;">Đòn thường 25 → 60 DMG (đa mục tiêu, gồng càng lâu càng mạnh)</span>
+          <span style="color:#ffcc00;">M2</span><span style="color:#ccc;">Choáng tầm siêu xa, 50 DMG + choáng 2s (đa mục tiêu)</span>
+          <span style="color:#ffcc00;">Q</span><span style="color:#ccc;">Dash lướt né đòn</span>
+          <span style="color:#ffcc00;">E (giữ)</span><span style="color:#ccc;">Đỡ đòn — chặn HOÀN TOÀN sát thương (không còn phản dame). Không giữ E = nhận đủ dame (trừ Robot/Nuclear Form luôn miễn nhiễm)</span>
+        </div>
+      </div>
+      <div style="background:rgba(255,255,255,0.05); border:1px solid #333; border-radius:8px; padding:14px;">
+        <div style="color:#ffaa00; font-weight:bold; margin-bottom:10px; font-size:13px;">💥 KỸ NĂNG THƯỜNG</div>
+        <div style="display:grid; grid-template-columns:90px 1fr; gap:5px; line-height:1.8;">
+          <span style="color:#ffcc00;">Z</span><span style="color:#ccc;">Xả đạn liên tục — 70 DMG (hạ gục cộng dồn +5% DMG lần sau)</span>
+          <span style="color:#ffcc00;">X</span><span style="color:#ccc;">Đấm bắn xa rồi kéo lại đánh tiếp — 65 DMG + choáng 0.5s</span>
+          <span style="color:#ffcc00;">C</span><span style="color:#ccc;">Triệu hồi nhện robot lao vào nổ — 55 DMG + choáng 0.5s (mỗi mục tiêu trên map)</span>
+          <span style="color:#ffcc00;">V</span><span style="color:#ccc;">Tích nổ siêu lớn — 200 DMG diện rộng</span>
+          <span style="color:#ffcc00;">F (giữ)</span><span style="color:#ccc;">Đánh ngay 5,000 DMG lúc vừa nhấn, sau đó GIỮ thì cứ mỗi 0,005 giây (5ms) lại gây thêm 5,000 DMG + choáng liên tục toàn map (giữ tối đa 20 giây). Thả tay: choáng 1s rồi để lại lửa cháy 25 giây, 500 DMG/giây</span>
+          <span style="color:#ffcc00;">K</span><span style="color:#ccc;">Cần đầy thanh Năng Lượng Hạt Nhân — One-shot toàn bộ kẻ địch trên map + để lại vùng phóng xạ NẶNG 10,000 DMG/giây trong 30 giây (kể cả quái hồi sinh trong lúc đó cũng dính)</span>
+          <span style="color:#ffcc00;"></span><span style="color:#888; font-style:italic;">Tất cả chiêu KHÔNG còn hồi chiêu ở phía người chơi — bấm liên tục thoải mái (chỉ riêng cơ chế nội bộ vẫn tính giờ nhưng luôn cho phép dùng lại ngay)</span>
+        </div>
+      </div>
+      <div style="background:rgba(255,255,255,0.05); border:1px solid #333; border-radius:8px; padding:14px;">
+        <div style="color:#ff45b5; font-weight:bold; margin-bottom:10px; font-size:13px;">🗡️ CHẾ ĐỘ KIẾM & SÚNG (chọn "Kiếm & Súng" ở popup H/W3)</div>
+        <div style="display:grid; grid-template-columns:70px 1fr; gap:5px; line-height:1.8;">
+          <span style="color:#ffcc00;">B</span><span style="color:#ccc;">Chém rồi bắn — 35 DMG</span>
+          <span style="color:#ffcc00;">N</span><span style="color:#ccc;">Chém liên tục rồi súng kéo địch lại gần — 45 DMG + choáng 0.5s</span>
+          <span style="color:#ffcc00;">M</span><span style="color:#ccc;">Phóng kiếm bay xa — 60 DMG</span>
+          <span style="color:#ffcc00;">J</span><span style="color:#ccc;">Chém tích lực — 120 DMG</span>
+          <span style="color:#ffcc00;"></span><span style="color:#888; font-style:italic;">B/N/M/J luôn dùng được (kể cả khi đang Robot/Nuclear Form); R/T/Y/U chỉ mở khi đã chọn "Kiếm & Súng" ở popup H/W3, chưa chọn thì bấm sẽ báo khóa</span>
+          <span style="color:#ffcc00;">R</span><span style="color:#ccc;">Khống chế đám đông — 40 DMG diện rộng + choáng 4 giây toàn map</span>
+          <span style="color:#ffcc00;">T</span><span style="color:#ccc;">"Xóa Sổ Tất Cả" — sát thương gần như vô hạn, giết sạch quái/boss hiện có trên map</span>
+          <span style="color:#ffcc00;">Y</span><span style="color:#ccc;">Tiểu nổ — 50,000 DMG diện rộng</span>
+          <span style="color:#ffcc00;">U</span><span style="color:#ccc;">Cầu vồng lửa 10 giây — 10,000 DMG mỗi giây, tổng 100,000 DMG</span>
+        </div>
+      </div>
+      <div style="background:rgba(255,255,255,0.05); border:1px solid #333; border-radius:8px; padding:14px;">
+        <div style="color:#ff5555; font-weight:bold; margin-bottom:10px; font-size:13px;">💣 BOM TỰ HỦY & PHÍM TẮT FORM (D4/I · P · O · G · H)</div>
+        <div style="display:grid; grid-template-columns:1fr; gap:6px; line-height:1.7; color:#ccc;">
+          <div><span style="color:#ffcc00;">I (hoặc nút "Bom Tự Hủy"):</span> kích nổ thủ công 10,000 DMG diện rộng lên toàn map, dùng được bao nhiêu lần tùy thích.</div>
+          <div><span style="color:#ffcc00;">Tự kích nổ (không cần bấm gì):</span> mỗi lần bạn nhận sát thương thì số DMG đó được cộng dồn vào một "ngưỡng nổ" riêng, bắt đầu từ 2,000. Khi tổng dồn đủ ngưỡng, TỰ ĐỘNG nổ một quả bom cực lớn 100,000 DMG diện rộng lên toàn map, rồi ngưỡng lần sau sẽ NHÂN ĐÔI (2,000 → 4,000 → 8,000 → ...) — càng bị đánh nhiều, quả sau càng cần nhiều máu mất mới nổ nhưng cũng mạnh dần theo cấp số nhân.</div>
+          <div><span style="color:#ffcc00;">P:</span> biến hình Nuclear Form (F2) — dùng ngay không cần đầy Rage, +500% DMG, miễn nhiễm sát thương, tự phủ phóng xạ toàn map. Không vào được khi đang Robot Form.</div>
+          <div>☢️ <b style="color:#ffcc00;">CHỈ khi đang Nuclear Form:</b> mọi chiêu trúng đòn (và mọi lần phản dame) để lại hiệu ứng phóng xạ XANH LÁ ĐẬM (khác sắc độ với phóng xạ xanh lá SÁNG mặc định của Nuclear Form) + choáng quái/boss 1.5 giây — riêng chiêu nào bản thân vốn đã gây choáng (M2, X, F giữ, R, Nhện Nổ...) thì cộng thêm choáng phóng xạ x2 = 3 giây. Normal Form và Robot Form KHÔNG có hiệu ứng này.</div>
+          <div><span style="color:#ffcc00;">O:</span> bật/tắt hút máu — chỉ có tác dụng khi đang Nuclear Form: hút 50,000 HP/giây từ mọi quái/boss, máu dư thành Giáp Ảo.</div>
+          <div><span style="color:#ffcc00;">G:</span> biến hình Robot Form (F1) — cần đầy thanh Chiến Ý, +100% DMG, x2.5 kích thước, miễn nhiễm sát thương. Không vào được khi đang Nuclear Form.</div>
+          <div><span style="color:#ffcc00;">H:</span> mở popup chọn vũ khí (W3) — W/S chọn "Súng" hoặc "Kiếm & Súng", Enter xác nhận.</div>
+        </div>
+      </div>
+      <div style="background:rgba(255,80,80,0.06); border:1px solid #ff333366; border-radius:8px; padding:14px;">
+        <div style="color:#ff4444; font-weight:bold; margin-bottom:10px; font-size:13px;">☠️ ADMIN PANEL (phím ~ hoặc nút "ADMIN [~]")</div>
+        <div style="display:grid; grid-template-columns:1fr; gap:4px; line-height:1.7; color:#ccc;">
+          <div>🖥️ <b style="color:#ffcc00;">MÀN HÌNH</b> — mở popup gồm 2 nút: "Toàn Màn Hình" (bật/tắt fullscreen trình duyệt) và "Chế Độ Desktop" (giả lập giao diện màn hình rộng như máy tính ngay trên điện thoại)</div>
+          <div>✨ <b style="color:#ffcc00;">GOD MODE</b> — bật/tắt bất tử tuyệt đối, mọi kẻ địch chạm vào vòng quanh người chơi (bán kính "xuyên map") đều chết ngay</div>
+          <div>⚛️ <b style="color:#ffcc00;">ĐẦY RAGE</b> — bấm 1 lần để làm đầy ngay cả 2 thanh Rage (Chiến Ý & Năng Lượng Hạt Nhân)</div>
+          <div>🔁 <b style="color:#ffcc00;">2 RAGE ĐẦY LUÔN</b> — bật/tắt: khi bật thì 2 thanh Rage luôn ở mức đầy, dùng G/K thoải mái không cần chờ hồi</div>
+          <div>🔥 <b style="color:#ffcc00;">DMG x1000 (STACK)</b> — mỗi lần bấm nhân dồn sát thương gây ra lên thêm x1000 (bấm nhiều lần cộng dồn số lần)</div>
+          <div>🚫 <b style="color:#ffcc00;">TẮT DMG x1000</b> — reset hệ số nhân sát thương về lại x1</div>
+          <div>☠️ <b style="color:#ffcc00;">AUTO KILL</b> — bật/tắt: tự động gom hết quái/boss lại 1 chỗ, choáng chúng và tự spam đòn M1 mỗi khung hình để cày kill</div>
+          <div>🧊 <b style="color:#ffcc00;">ĐÓNG BĂNG ALL</b> — bật/tắt: đóng băng toàn bộ quái/boss tại chỗ, không di chuyển/tấn công</div>
+          <div>💎 <b style="color:#ffcc00;">HP LUÔN ĐẦY</b> — bật/tắt: máu người chơi luôn được giữ ở mức tối đa, không bao giờ giảm</div>
+          <div>🏆 <b style="color:#ffcc00;">+999 KILLS</b> — bấm 1 lần để cộng thêm 999 vào bộ đếm số quái đã hạ</div>
+          <div>🤖 <b style="color:#ffcc00;">AUTO USE SKILL</b> — mở bảng cấu hình để chọn (nhiều) chiêu trong Z X C V B N M J F cho tự động lặp lại theo vòng, chỉnh được thời gian nghỉ giữa các lần dùng (0–1.5s) và thời gian giữ chiêu (hữu ích nhất với F — có thể chọn giữ vô hạn tới khi bấm DỪNG)</div>
+          <div>💾 <b style="color:#ffcc00;">LƯU/TREO</b> — mở bảng: Lưu file (lưu lại Kill & tiến trình vào máy), Xóa save, và bật/tắt Tự Động Treo Máy</div>
+          <div>🎚️ <b style="color:#ffcc00;">Multiplier Sát Thương</b> — thanh trượt 1x–1000x nhân toàn bộ sát thương gây ra</div>
+          <div>⚡ <b style="color:#ffcc00;">Multiplier Tốc Độ</b> — thanh trượt 1x–50x tăng tốc độ chung của game</div>
+          <div>⌨️ <b style="color:#ffcc00;">Admin Command Line</b> — gõ lệnh trực tiếp, ví dụ <span style="color:#88ff88;">/autoskill on ZXV 0.3 inf</span> để cấu hình auto-skill bằng lệnh thay vì bảng chọn</div>
+          <div>🔄 <b style="color:#ffcc00;">RESET ALL ADMIN</b> — tắt hết mọi hack/multiplier trên, đưa game về trạng thái gốc</div>
+        </div>
+      </div>
+      <div style="background:rgba(255,255,255,0.05); border:1px solid #333; border-radius:8px; padding:14px;">
+        <div style="color:#66ff66; font-weight:bold; margin-bottom:10px; font-size:13px;">⚙️ HỆ THỐNG & THỜI GIAN</div>
+        <div style="display:grid; grid-template-columns:70px 1fr; gap:5px; line-height:1.8;">
+          <span style="color:#ffcc00;">~</span><span style="color:#ccc;">Mở/đóng Admin Panel</span>
+          <span style="color:#ffcc00;">Esc</span><span style="color:#ccc;">Đóng popup / panel đang mở</span>
+          <span style="color:#ffcc00;">Tab</span><span style="color:#ccc;">Mở/đóng Hướng dẫn này</span>
+        </div>
+        <div style="margin-top:8px; color:#ccc; font-size:11px; line-height:1.7;">
+          🕐 <b style="color:#ffcc00;">Nút "THỜI GIAN"</b> (góc phải trên) — mở đồng hồ hệ thống hiển thị giờ:phút:giây thời gian thực (kèm chấm TICK nháy mỗi giây) + dòng mili giây/micro giây/nano giây (ms/µs/ns) chạy liên tục theo từng khung hình, ngày/tháng/năm dương lịch, âm lịch, tuần trăng (Trăng Non, Trăng Lưỡi Liềm, Bán Nguyệt/Thượng-Hạ Huyền, Trăng Tròn...) và chu kỳ thủy triều (Triều Cường/Triều Kém/đang tăng/đang giảm) ước tính theo ngày âm lịch. ms là số thật; µs/ns chỉ minh họa vì trình duyệt giới hạn độ chính xác đồng hồ ở khoảng 1ms.<br>
+          💾 <b style="color:#ffcc00;">Lưu file / Xóa save</b> — lưu tiến trình (Kill, v.v.) vào bộ nhớ trình duyệt để giữ qua lần chơi sau; xóa save sẽ dọn sạch dữ liệu đã lưu.<br>
+          🌑 <b style="color:#ffcc00;">Tự Động Treo Máy</b> — bật thì màn hình tối lại như đang "treo máy" nhưng game vẫn chạy ngầm bình thường; chạm màn hình để sáng lại.
+        </div>
+        <div style="margin-top:8px; color:#888; font-size:10px;">HP Người chơi: 10,000 | HP Boss: 50,000 | 5 Quái thường. Boss gây 50 DMG/0.5s, Quái gây 20 DMG/0.5s khi ở gần. Quái/boss thường hồi sinh sau 5 giây.<br>Không còn hệ thống Mana — thay bằng 2 thanh Rage: Chiến Ý (cho G — Robot Form) và Năng Lượng Hạt Nhân (cho K — Atomic Overload; P — Nuclear Form dùng được ngay không cần Rage).</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   GOD HUNTER V4 — ATOMIC WAR
+   Toàn bộ logic kỹ năng được viết mới hoàn toàn theo yêu cầu.
+   HUD / Admin Panel / Save-Load / Tab Help tái sử dụng phong cách cũ.
+   ============================================================ */
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d', { alpha:false, desynchronized:true }); // tắt alpha blending + desynchronized giúp trình duyệt render nhanh hơn, tăng FPS thực tế
+ctx.imageSmoothingEnabled = false; // bỏ nội suy làm mượt ảnh — đỡ tốn GPU/CPU mỗi khung hình, khung hình ra nhanh hơn
+let hasTouchInput = false;
+document.addEventListener('touchstart', () => { hasTouchInput = true; }, { capture:true, once:true, passive:true });
+
+// ---- PHÁT HIỆN DESKTOP (chuột + bàn phím) — ẩn joystick cảm ứng, dùng A/D để di chuyển ----
+const isDesktopDevice = !('ontouchstart' in window) && window.matchMedia && window.matchMedia('(pointer:fine)').matches;
+window.addEventListener('DOMContentLoaded', ()=>{
+  if (isDesktopDevice){
+    const jz = document.getElementById('joyZone');
+    if (jz) jz.style.display = 'none';
+    // Máy tính thật (chuột + bàn phím, không cảm ứng) -> tự động bật luôn CHẾ ĐỘ DESKTOP,
+    // không cần bấm tay trong bảng Admin nữa.
+    if (typeof toggleDesktopMode === 'function' && !desktopModeOn){
+      toggleDesktopMode();
+    }
+  }
+});
+
+document.addEventListener('keydown', e => {
+  const k = e.key;
+  const ctrlShift = (e.ctrlKey || e.metaKey) && e.shiftKey;
+  if (k === 'F12' || (ctrlShift && /[IJCijc]/.test(k)) || ((e.ctrlKey||e.metaKey) && /[Uu]/.test(k))) {
+    e.preventDefault(); e.stopPropagation(); return false;
+  }
+}, true);
+
+function resize() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  const groundY = Math.floor(canvas.height * 0.8);
+  S.groundY = groundY;
+  S.player.y = groundY;
+  S.boss.y = groundY;
+  S.mobs.forEach(m => m.y = groundY);
+  layoutSideButtons();
+}
+window.addEventListener('resize', resize);
+
+// ============================================================
+// TỰ ĐỘNG CANH VỊ TRÍ 2 CỘT NÚT (leftBtnCol / rightBtnCol)
+// Dựa trên kích thước HUD thực tế để KHÔNG BAO GIỜ đè lên HUD/chiêu
+// và KHÔNG BAO GIỜ tràn ra ngoài màn hình.
+// ============================================================
+function fitColumnButtons(col, availHeight, widthRatio, sizeBoost, desktopMaxH){
+  // widthRatio: tỉ lệ rộng/cao — >1 để nút KHÔNG bị ép vuông (chữ 2 dòng như "Nuclear/Form" cần rộng hơn cao)
+  // sizeBoost: cộng thêm (px) vào chiều cao mỗi nút — theo yêu cầu tăng kích cỡ nút cột trái/phải thêm 37.5px
+  // desktopMaxH: trần chiều cao riêng cho từng cột khi ở chế độ Desktop (mặc định 54 nếu không truyền)
+  widthRatio = widthRatio || 1;
+  sizeBoost = sizeBoost || 0;
+  const items = Array.from(col.children);
+  const n = items.length;
+  if (n === 0) return;
+  let gap = availHeight > 420 ? 12 : (availHeight > 220 ? 7 : 4);
+  let itemH = Math.floor((availHeight - gap * (n - 1)) / n);
+  // Không ép sàn 40px nếu không đủ chỗ — thà nút nhỏ lại còn hơn tràn ra ngoài (mất nút E).
+  if (itemH < 34){ gap = 3; itemH = Math.floor((availHeight - gap * (n - 1)) / n); }
+  const _isDesktop = document.body.classList.contains('desktop-mode');
+  // Chế độ Desktop: màn hình cao rộng khiến công thức chia đều availHeight cho ra nút RẤT to — chặn trần thấp hẳn xuống và bỏ phần cộng thêm (sizeBoost) để nút gọn lại đúng yêu cầu.
+  const _maxH = _isDesktop ? (desktopMaxH || 54) : 88;
+  const _boost = _isDesktop ? 0 : sizeBoost;
+  itemH = Math.max(26, Math.min(_maxH, itemH)) + _boost; // to & vuông giống Hình 2, nhưng không tràn khi màn hẹp
+  const itemW = Math.round(itemH * widthRatio);
+  col.style.gap = gap + 'px';
+  items.forEach(btn => {
+    btn.style.boxSizing = 'border-box'; // padding/viền nằm TRONG kích thước đã tính, không cộng dồn làm méo
+    btn.style.height = itemH + 'px';
+    btn.style.width = itemW + 'px';
+    btn.style.fontSize = Math.max(9, Math.min(13, Math.floor(itemH*0.19))) + 'px';
+    btn.style.lineHeight = '1.05';
+    btn.style.overflow = 'visible';
+    btn.style.whiteSpace = 'normal';
+  });
+}
+function layoutSideButtons(){
+  const margin = 8;
+  const hudTopRow = document.getElementById('hudTopRow');
+  const combatLog = document.getElementById('combatLog');
+  const skillBar = document.getElementById('skillBarNormal');
+  const joyZone = document.getElementById('joyZone');
+  const leftCol = document.getElementById('leftBtnCol');
+  const rightCol = document.getElementById('rightBtnCol');
+  if (!hudTopRow || !leftCol || !rightCol || !skillBar) return;
+
+  // Đo TOÀN BỘ khối HUD trên (hudTopRow) — kể cả khi nó xuống nhiều dòng do màn hẹp/dọc
+  const hudBottom = hudTopRow.getBoundingClientRect().bottom;
+  const skillTop = skillBar.getBoundingClientRect().top;
+  const joyTop = (joyZone && joyZone.style.display !== 'none') ? joyZone.getBoundingClientRect().top : window.innerHeight;
+
+  // ---- JOYSTICK: chế độ Desktop lùi xuống 5px, nhưng luôn giữ khoảng hở an toàn (6px) phía trên skill bar và không vượt màn hình ----
+  if (joyZone) {
+    const isDesktop = document.body.classList.contains('desktop-mode');
+    const defaultBottom = 70;
+    if (isDesktop) {
+      // Joystick nằm bên TRÁI màn hình (left:70px, rộng 110px) còn skill bar nằm CĂN GIỮA màn hình
+      // => trên màn hình rộng (chế độ Desktop) 2 khối không chồng theo chiều ngang, nên có thể đưa
+      // joystick xuống sát viền dưới (cách đúng 3px) mà không chạm skill bar.
+      joyZone.style.bottom = '3px';
+    } else {
+      // Chế độ THƯỜNG (không phải Desktop): lùi joystick xuống 5px, nhưng nếu màn hẹp khiến joystick
+      // và skill bar chồng nhau theo chiều NGANG thì tự động giảm bớt để luôn cách skill bar tối thiểu 2px.
+      const joyRectNow = joyZone.getBoundingClientRect();
+      const skillRectNow = skillBar.getBoundingClientRect();
+      const overlapX = !(joyRectNow.right < skillRectNow.left || joyRectNow.left > skillRectNow.right);
+      const desired = defaultBottom - 5;
+      if (overlapX) {
+        const safeGap = 2;
+        const minBottomAllowed = (window.innerHeight - skillTop) + safeGap;
+        joyZone.style.bottom = Math.max(desired, minBottomAllowed, 0) + 'px';
+      } else {
+        joyZone.style.bottom = Math.max(desired, 0) + 'px'; // không chồng ngang -> lùi đủ 5px, không cần giữ khoảng cách
+      }
+    }
+  }
+
+  // ---- CỘT TRÁI: dưới TOÀN BỘ HUD trên, trên joystick & skill bar ----
+  // Chế độ Desktop: lùi cột trái xuống thêm 15px theo yêu cầu (HUD phóng to nên cột trái cần lùi xuống một chút cho thoáng)
+  const leftTop = hudBottom + margin + (document.body.classList.contains('desktop-mode') ? 15 : 0);
+  const leftBottomLimit = Math.min(skillTop, joyTop) - margin;
+  const leftAvail = Math.max(70, leftBottomLimit - leftTop);
+  leftCol.style.top = leftTop + 'px';
+  fitColumnButtons(leftCol, leftAvail, 1.28, 10, 67); // cột trái: nhãn 2 dòng cần rộng hơn + tăng kích cỡ thêm 10px; trần Desktop +6px theo yêu cầu (61->67)
+
+  // ---- COMBAT LOG: nằm BÊN PHẢI cột trái (không còn đè lên khung HP nữa) ----
+  const leftColRect = leftCol.getBoundingClientRect();
+  combatLog.style.top = leftTop + 'px';
+  combatLog.style.left = (leftColRect.right + margin) + 'px';
+  combatLog.style.maxHeight = leftAvail + 'px';
+
+  // ---- CỘT PHẢI: Jump/M1/M2/Q/E — dưới TOÀN BỘ HUD trên, trên skill bar, nâng cao hơn 30px (cố định) để nút E không bị lùi mất ----
+  // Chế độ Desktop: lùi cột phải xuống thêm 15px theo yêu cầu
+  const rightTop = Math.max(hudBottom + margin - 30 + (document.body.classList.contains('desktop-mode') ? 15 : 0), 4);
+  const rightBottomLimit = skillTop - margin;
+  const rightAvail = Math.max(90, rightBottomLimit - rightTop);
+  rightCol.style.top = rightTop + 'px';
+  fitColumnButtons(rightCol, rightAvail, 1.3, 10, 58); // cột phải: nút E có thêm nhãn BLOCK nên cũng cần rộng hơn cao + tăng kích cỡ thêm 10px; trần Desktop tăng lên 70px theo yêu cầu
+}
+window.addEventListener('DOMContentLoaded', layoutSideButtons);
+window.addEventListener('load', layoutSideButtons);
+setTimeout(layoutSideButtons, 300); // đề phòng font/HUD load trễ làm lệch kích thước
+setInterval(layoutSideButtons, 400); // tự làm mới liên tục — HUD đổi chiều cao (giáp ảo hiện/ẩn...) không còn bị đè chồng
+
+const _gY = () => Math.floor(window.innerHeight * 0.8);
+
+// ============================================================
+// GRAPHICS QUALITY (do hoa)
+// GFX_MAX = false -> ban THUONG | GFX_MAX = true -> ban MAX DO HOA (hieu ung nhieu/to/sang hon)
+// ============================================================
+const GFX_MAX = true;
+const FX_SCALE = GFX_MAX ? 3 : 1;
+const FX_RING_SCALE = GFX_MAX ? 1.35 : 1;
+const FX_GLOW_SCALE = GFX_MAX ? 1.8 : 1;
+// FIX LAG: giới hạn cứng số particle/fx tồn tại cùng lúc — không giới hạn thì combat kéo dài
+// (đặc biệt AFK farm / tự hủy liên tục) sẽ khiến 2 mảng này phình to vô hạn và giật máy.
+// Khi vượt giới hạn, các phần tử CŨ NHẤT bị cắt bớt trước (thứ tự spawn), không ảnh hưởng gameplay.
+const MAX_PARTICLES = GFX_MAX ? 260 : 160;
+const MAX_FX = GFX_MAX ? 90 : 60;
+
+// ============================================================
+// GAME STATE
+// ============================================================
+const S = {
+  groundY: _gY(),
+  player: {
+    x: 200, y: _gY(), vx: 0, vy: 0, onGround: true, facing: 1, size: 34, baseSize: 34,
+    hp: 10000, maxHp: 10000, shield: 0, rage1: 0, rage2: 0, maxRage: 100,
+    kills: 0, cameraX: 0,
+    weapon: 1,              // 1 or 2
+    transformed: false,      // Robot form (G / F1)
+    swordGunMode: false,     // unlocked extra bar (chọn qua popup W3)
+    nuclearForm: false,      // P / F2
+    nuclearPassiveStun: false, // O toggle
+    skill1Stacks: 0,          // +5% per stack from Skill1 finishing blow
+    blocking: false, blockHoldStart: 0,
+    dashCooldown: 0, blockCooldown: 0, jumpLock: false,
+    fCharging: false, fChannelUntil: 0, channeling: false,
+    selfDestructAccum: 0,
+    selfDestructThreshold: 2000, // D4: ngưỡng DMG cần nhận để tự kích nổ, nhân đôi sau mỗi lần
+    m1HoldStart: 0, m1Holding: false,
+    invuln: false
+  },
+  boss: { x: 900, y: _gY(), hp: 50000, maxHp: 50000, size: 60, facing: -1, isDead: false, frozen: false, deadTimer:0, atkCd:0 },
+  mobs: [],
+  cooldowns: {}, // per-skill cooldown timers keyed by skill name
+  particles: [],
+  floatTexts: [],
+  spiders: [],
+  fx: [],
+  lastTime: performance.now()
+};
+
+for (let i=0;i<5;i++){
+  S.mobs.push({ id:i+1, x: 1200 + i*160, homeX: 1200+i*160, y:_gY(), hp:2000, maxHp:2000, size:32, facing: i%2===0?1:-1, isDead:false, frozen:false, deadTimer:0, atkCd:0 });
+}
+
+const HACKS = { godmode:false, infrage:false, autokill:false, freeze:false, infhp:false };
+let hackDmgMultiplier = 1;
+let hackDmgStack = 1;
+let hackSpeedMultiplier = 1;
+const PLAYER_BASE_SPEED = 9.6;
+
+// ============================================================
+// UTIL
+// ============================================================
+function formatBig(n){ n = Math.round(n); return n.toLocaleString('en-US'); }
+function addLog(txt){
+  const box = document.getElementById('combatLog');
+  const line = document.createElement('div');
+  line.textContent = txt;
+  line.style.cssText = 'background:rgba(0,0,0,0.65); color:#fff; font-size:10px; padding:4px 6px; border-left:2px solid #ff5555; border-radius:3px; opacity:1; transition:opacity 3s;';
+  box.appendChild(line);
+  setTimeout(()=>{ line.style.opacity='0'; }, 2500);
+  setTimeout(()=>{ line.remove(); }, 5600);
+  while (box.children.length > 8) box.removeChild(box.firstChild);
+}
+function showSystemAlert(msg){
+  const el = document.getElementById('systemAlert');
+  el.textContent = msg; el.style.display='block';
+  clearTimeout(showSystemAlert._t);
+  showSystemAlert._t = setTimeout(()=>{ el.style.display='none'; }, 2200);
+}
+function spawnFloatText(x,y,text,color){
+  S.floatTexts.push({x,y,text,color:color||'#fff', life:1.0});
+}
+function spawnParticles(x,y,color,count){
+  const n = Math.round((count||10) * FX_SCALE);
+  for(let i=0;i<n;i++){
+    S.particles.push({x,y, vx:(Math.random()-0.5)*8*(GFX_MAX?1.3:1), vy:(Math.random()-1)*8*(GFX_MAX?1.3:1), life:1.0, color:color||'#ffaa00', size:GFX_MAX?9:6});
+  }
+  // FIX LAG: cắt bớt particle CŨ NHẤT nếu vượt trần, tránh mảng phình vô hạn khi spam đòn/tự hủy liên tục
+  if (S.particles.length > MAX_PARTICLES) S.particles.splice(0, S.particles.length - MAX_PARTICLES);
+}
+// ---- Hiệu ứng khi đánh trúng — đổi theo Form: Robot = xanh dương + mảnh bánh răng, Nuclear = xanh lá + xung phóng xạ ----
+function spawnHitImpactFx(x, y){
+  const fb = getFormBoost();
+  if (fb && fb.mode==='robot'){
+    spawnParticles(x, y, '#3388ff', 6);
+    S.fx.push({ type:'gearHit', x, y, life:0.35, maxLife:0.35 });
+  } else if (fb && fb.mode==='nuclear'){
+    spawnParticles(x, y, '#33ff88', 6);
+    S.fx.push({ type:'radHit', x, y, life:0.4, maxLife:0.4 });
+  } else {
+    spawnParticles(x, y, '#ff8844', 6);
+  }
+}
+
+// ============================================================
+// LIVING ENEMIES / TARGET LIST
+// ============================================================
+function allEnemies(){
+  const list = [];
+  if (!S.boss.isDead) list.push(S.boss);
+  S.mobs.forEach(m => { if (!m.isDead) list.push(m); });
+  return list;
+}
+function isBossEntity(e){ return e === S.boss; }
+function inFront(e){ return (e.x - S.player.x) * S.player.facing >= -15; }
+function aimbotTarget(){
+  const list = allEnemies();
+  if (list.length===0) return null;
+  let best=null, bestD=Infinity;
+  list.forEach(e=>{
+    const d = Math.abs(e.x - S.player.x);
+    if (d<bestD){ bestD=d; best=e; }
+  });
+  return best;
+}
+// Tự động xoay nhân vật quay mặt về phía mục tiêu gần nhất trước khi ra đòn,
+// để hiệu ứng bắn/chém luôn hướng đúng về quái/boss thay vì lệch theo hướng di chuyển cũ.
+function autoFaceNearest(){
+  const t = aimbotTarget();
+  if (t) S.player.facing = (t.x >= S.player.x) ? 1 : -1;
+}
+
+// Deal damage to all living enemies within range of the player (multi-target).
+// range = null means whole map (super long range / ultimates).
+function pullEntityToward(e, amount){
+  const dir = (S.player.x > e.x) ? 1 : -1;
+  e.x += dir * amount;
+  const minDist = isBossEntity(e) ? 90 : 65;
+  if (Math.abs(e.x - S.player.x) < minDist) e.x = S.player.x - dir*minDist;
+}
+function knockbackEntity(e, amount){
+  const dir = (e.x >= S.player.x) ? 1 : -1;
+  e.x += dir * amount;
+}
+function dealDamageAll(baseAmount, label, opts){
+  opts = opts || {};
+  const range = (opts.range === undefined) ? 260 : opts.range;
+  const stunMs = opts.stunMs || 0;
+  const dotPerSec = opts.dotPerSec || 0;
+  const dotSec = opts.dotSec || 0;
+  const knockback = opts.knockback || 0; // đẩy lùi địch ra xa (px)
+  const pull = opts.pull || 0;           // kéo địch lại gần người chơi (px)
+  const facingOnly = !!opts.facingOnly;  // chỉ trúng địch phía trước hướng nhìn (đòn có hướng)
+  let hitCount = 0;
+  allEnemies().forEach(e => {
+    if (range !== null && Math.abs(e.x - S.player.x) > range) return;
+    if (facingOnly && !inFront(e)) return;
+    hitCount++;
+    applyDamageToEntity(e, baseAmount, label, {isM2: !!(opts.isM2 || (stunMs && stunMs>0))});
+    if (stunMs) applyStunToEntity(e, stunMs);
+    if (dotPerSec) applyDotToEntity(e, dotPerSec, dotSec, opts.dotTag || 'genericBurn');
+    if (knockback) knockbackEntity(e, knockback);
+    if (pull) pullEntityToward(e, pull);
+  });
+  if (hitCount>0) addLog(`💥 [${label}] Trúng ${hitCount} mục tiêu!`);
+  else addLog(`⚠️ [${label}] Không có mục tiêu trong tầm!`);
+  return hitCount;
+}
+
+function computeOutgoingDamage(base){
+  let dmg = base;
+  if (S.player.transformed) dmg *= 2.0;      // Robot +100%
+  if (S.player.nuclearForm) dmg *= 6.0;      // Nuclear +500% (x6 total)
+  dmg *= hackDmgMultiplier * hackDmgStack;
+  return dmg;
+}
+
+function applyDamageToEntity(e, base, label, opts){
+  opts = opts || {};
+  if (HACKS.godmode && false) return; // godmode only affects player
+  let dmg = computeOutgoingDamage(base);
+  if (e.frozen) dmg *= 1; // frozen enemies still take dmg
+  e.hp -= dmg;
+  // CHỈ khi đang bật NUCLEAR FORM thì đòn trúng (chiêu thường lẫn phản dame) mới để lại hiệu ứng
+  // phóng xạ nhẹ trên quái/boss KÈM CHOÁNG 1.5 giây (riêng đòn/chiêu nào bản thân vốn đã gây choáng
+  // — M2, X, F, R, Nhện Nổ... thì thêm choáng phóng xạ x2 = 3 giây). Normal Form và Robot Form
+  // KHÔNG có hiệu ứng này. Dùng thẻ (tag) riêng 'hitStunRadiation' — hiệu ứng nhìn giống phóng xạ
+  // Nuclear Form nhưng màu khác để phân biệt.
+  if (dmg > 0 && S.player.nuclearForm){
+    const stunMs = opts.isM2 ? 3000 : 1500;
+    applyDotToEntity(e, Math.max(1, dmg*0.1), stunMs/1000, 'hitStunRadiation');
+    applyStunToEntity(e, stunMs);
+  }
+  spawnFloatText(e.x, e.y - e.size - 20, '-'+formatBig(dmg), isBossEntity(e)?'#ff5555':'#ffdd55');
+  spawnHitImpactFx(e.x, e.y - e.size/2);
+  if (e.hp <= 0 && !e.isDead){
+    e.hp = 0; e.isDead = true; e.deadTimer = 0;
+    S.player.kills += isBossEntity(e) ? 5 : 1;
+    document.getElementById('killText').textContent = S.player.kills;
+    addLog((isBossEntity(e)?'💀 BOSS':'💀 QUÁI #'+e.id)+' HẠ GỤC!');
+    // Skill1 finishing bonus
+    if (label && label.includes('Xả Đạn')){
+      S.player.skill1Stacks++;
+      addLog(`🔥 [Xả Đạn] Hạ gục! DMG lần sau +${(S.player.skill1Stacks*5)}%`);
+    }
+    // Nuclear reflect/attack radiation is applied separately at call site
+  }
+  updateEnemyHpUI();
+}
+
+function applyStunToEntity(e, ms){
+  // Lấy thời gian choáng DÀI HƠN giữa hiệu ứng hiện tại và hiệu ứng mới — không ghi đè
+  // xuống mức ngắn hơn (vd: choáng phóng xạ 1.5s không được phép cắt ngắn choáng 4s của R).
+  const until = performance.now() + ms;
+  // Ghi nhớ màu/form NGAY TẠI THỜI ĐIỂM gây choáng này (chỉ khi nó thực sự là mức choáng
+  // đang thắng — dài hơn hoặc bằng mức hiện có). Nhờ vậy nếu người chơi thoát Nuclear/Robot Form
+  // trong lúc quái/boss vẫn còn đang choáng, quái/boss vẫn giữ đúng màu của form lúc gây choáng
+  // cho tới khi hết choáng rồi mới đổi về màu choáng mặc định — không bị đổi màu ngay lập tức
+  // theo trạng thái hiện tại (đã tắt form) của người chơi.
+  if (until >= (e.stunnedUntil || 0)){
+    const fb = getFormBoost();
+    e.stunFormColor = fb ? fb.color : null;
+    e.stunFormMode = fb ? fb.mode : null;
+  }
+  e.stunnedUntil = Math.max(e.stunnedUntil || 0, until);
+}
+// Icon/màu riêng cho từng loại hiệu ứng DOT — để lửa KHÔNG còn hiện giống phóng xạ nữa.
+const DOT_VISUALS = {
+  fire:            { icon:'🔥',  color:'#ff8844', yOff:0  },
+  nuclearRadiation:{ icon:'☢️',  color:'#66ff88', yOff:18 },
+  atomicHeavy:     { icon:'☢️',  color:'#ff5555', yOff:36 },
+  genericBurn:     { icon:'☢️',  color:'#aaddff', yOff:54 },
+  hitRadiation:    { icon:'☢️',  color:'#88ffcc', yOff:72 },
+  // Phóng xạ CHOÁNG — sinh ra khi chiêu trúng đòn / khi phản dame. Dùng thẻ (tag) RIÊNG,
+  // màu XANH LÁ ĐẬM (khác sắc độ với xanh lá SÁNG của Nuclear Form) để phân biệt trực quan.
+  hitStunRadiation:{ icon:'☢️',  color:'#146c34', yOff:90 },
+  default:         { icon:'☢️',  color:'#66ff88', yOff:0  }
+};
+// Hệ thống DOT nhiều kênh độc lập — mỗi loại hiệu ứng (lửa / phóng xạ / phóng xạ nặng / ...)
+// có ô nhớ riêng (theo "tag"), tự cộng dồn sát thương và tự hết hạn riêng, KHÔNG ghi đè lẫn nhau.
+// Mỗi tag tích lũy thời gian (secAccum) và chỉ trừ máu khi ĐỦ ĐÚNG 1 GIÂY THỰC — trừ đúng số
+// nguyên cố định mỗi lần (giống cơ chế tickTimer % 60 của bản PC2), KHÔNG trừ theo phần lẻ dt mỗi
+// khung hình nữa — đây là lý do trước đó số damage hiện ra bị "random thành 1 khoảng" thay vì
+// đúng 1 số cố định như mô tả.
+function applyDotToEntity(e, perSec, seconds, tag){
+  tag = tag || 'default';
+  if (!e.dots) e.dots = {};
+  const now = performance.now();
+  const until = now + seconds*1000;
+  const existing = e.dots[tag];
+  if (existing){
+    // Cùng loại hiệu ứng lặp lại (vd: Nuclear Form duy trì mỗi frame) — làm mới, lấy mức mạnh hơn
+    existing.perSec = Math.max(existing.perSec, perSec);
+    existing.until = Math.max(existing.until, until);
+  } else {
+    e.dots[tag] = { perSec, until, secAccum:0 };
+  }
+}
+
+function updateEnemyHpUI(){
+  document.getElementById('bossHpText').textContent = formatBig(Math.max(0,S.boss.hp))+'/'+formatBig(S.boss.maxHp);
+  document.getElementById('bossBar').style.width = Math.max(0,(S.boss.hp/S.boss.maxHp*100))+'%';
+  let mobHp=0, mobMax=0;
+  S.mobs.forEach(m=>{ mobHp += Math.max(0,m.hp); mobMax += m.maxHp; });
+  document.getElementById('mobsHpText').textContent = formatBig(mobHp)+'/'+formatBig(mobMax);
+  document.getElementById('mobsBar').style.width = (mobMax? (mobHp/mobMax*100):0)+'%';
+}
+
+function damagePlayer(amount, fromLabel, sourceEntity){
+  if (HACKS.godmode || HACKS.infhp){ addLog(`✨ [GOD MODE] ${fromLabel} gây ${formatBig(amount)} DMG — CHẶN HOÀN TOÀN!`); return; }
+  if (S.player.invuln) return;
+
+  // ---- NUCLEAR FORM: MIỄN NHIỄM HOÀN TOÀN sát thương + LUÔN phản 300% lại quái/boss (không cần block) ----
+  if (S.player.nuclearForm){
+    const reflectDmg = amount * 3.0;
+    spawnRingFx('#33ff88', 130, 0.3, S.player.x, S.player.y - S.player.size);
+    if (sourceEntity && !sourceEntity.isDead){
+      applyDamageToEntity(sourceEntity, reflectDmg, 'Phản 300% (Nuclear)');
+      applyDotToEntity(sourceEntity, 5000, 20, 'nuclearRadiation');
+      S.fx.push({ type:'bullet', x:S.player.x, y:S.player.y-S.player.size, tx:sourceEntity.x, ty:sourceEntity.y-sourceEntity.size, life:0.2, maxLife:0.2, color:'#33ff88', width:5 });
+    } else {
+      dealDamageAll(reflectDmg, 'Phản 300% (Nuclear)', {range:null});
+      allEnemies().forEach(e=>applyDotToEntity(e, 5000, 20, 'nuclearRadiation'));
+    }
+    addLog(`☢️ [NUCLEAR MIỄN NHIỄM] ${fromLabel} gây ${formatBig(amount)} DMG — KHÔNG NHẬN, phản lại ${formatBig(reflectDmg)}!`);
+    return; // Nuclear Form không bao giờ mất máu
+  }
+
+  if (S.player.blocking){
+    // ĐỠ (E): chặn HOÀN TOÀN sát thương (player không mất máu) — KHÔNG còn phản dame nữa
+    addLog(`🛡️ [ĐỠ HOÀN TOÀN] Chặn ${formatBig(amount)} DMG từ ${fromLabel}!`);
+    return; // Không nhận sát thương khi đang block
+  }
+
+  // ---- ROBOT FORM: MIỄN NHIỄM HOÀN TOÀN sát thương ----
+  if (S.player.transformed){
+    addLog(`🤖 [ROBOT MIỄN NHIỄM] ${fromLabel} gây ${formatBig(amount)} DMG — KHÔNG NHẬN!`);
+    return;
+  }
+
+  // ---- GIÁP ẢO: hấp thụ TOÀN BỘ sát thương trước, hết giáp ảo mới đánh vào máu ----
+  if (S.player.shield > 0){
+    const absorbed = Math.min(S.player.shield, amount);
+    amount -= absorbed;
+    S.player.shield -= absorbed;
+    updatePlayerHpUI();
+    addLog(`🛡️✨ [GIÁP ẢO] Chặn ${formatBig(absorbed)} DMG (còn ${formatBig(S.player.shield)} giáp ảo)!`);
+    if (amount <= 0) return; // Giáp ảo hấp thụ hết, không mất máu
+  }
+
+  // KHÔNG block, KHÔNG Nuclear, KHÔNG Robot, hết giáp ảo => nhận sát thương còn lại
+  S.player.hp -= amount;
+  spawnFloatText(S.player.x, S.player.y - S.player.size - 20, '-'+formatBig(amount), '#ff3333');
+  // ---- TỰ HỦY: cộng dồn sát thương nhận, đủ ngưỡng thì tự nổ (ngưỡng nhân đôi sau mỗi lần) ----
+  S.player.selfDestructAccum = (S.player.selfDestructAccum||0) + amount;
+  if (S.player.selfDestructAccum >= S.player.selfDestructThreshold){
+    performSelfDestruct(true);
+    S.player.selfDestructThreshold *= 2;
+  }
+  if (S.player.hp <= 0){
+    S.player.hp = 0;
+    addLog('☠️ GOD HUNTER GỤC NGÃ! Hồi sinh sau 3 giây...');
+    setTimeout(()=>{ S.player.hp = S.player.maxHp; updatePlayerHpUI(); addLog('✨ HỒI SINH! HP đầy trở lại!'); }, 3000);
+  }
+  updatePlayerHpUI();
+}
+function performSelfDestruct(auto){
+  const sdFb = getFormBoost();
+  if (auto){
+    addLog(`💥 [TỰ HỦY] Nhận đủ ${formatBig(S.player.selfDestructThreshold)} DMG — TỰ KÍCH NỔ 100,000 DMG diện rộng! (Ngưỡng lần sau: ${formatBig(S.player.selfDestructThreshold*2)})`);
+    spawnParticles(S.player.x, S.player.y - S.player.size, sdFb ? sdFb.color : '#ff2200', 40);
+    spawnRingFx(sdFb ? sdFb.color : '#ff2200', 360, 0.5);
+    dealDamageAll(100000, 'Tự Hủy AoE', {range:null});
+    S.player.selfDestructAccum = 0;
+  } else {
+    addLog('💥 [D4] TỰ KÍCH NỔ THỦ CÔNG — gây 10,000 DMG diện rộng!');
+    spawnParticles(S.player.x, S.player.y - S.player.size, sdFb ? sdFb.color : '#ff8844', 20);
+    spawnRingFx(sdFb ? sdFb.color : '#ff8844', 220, 0.4);
+    dealDamageAll(10000, 'Tự Hủy Thủ Công', {range:null});
+  }
+}
+function updatePlayerHpUI(){
+  document.getElementById('hpText').textContent = formatBig(S.player.hp);
+  document.getElementById('hpBar').style.width = Math.max(0,(S.player.hp/S.player.maxHp*100))+'%';
+  const shieldRow = document.getElementById('shieldRow');
+  const shield = S.player.shield || 0;
+  // FIX: dùng visibility thay vì display để dòng Giáp Ảo LUÔN chiếm chỗ cố định trong khung HP.
+  // Trước đây display:none/block làm hudHpPanel đổi chiều cao mỗi khi giáp ảo hiện/ẩn (vd lúc hút
+  // máu Nuclear Form), khiến layoutSideButtons() đo lại và đẩy cột nút trái/phải lùi xuống theo.
+  if (shield > 0){
+    shieldRow.style.visibility = 'visible';
+    document.getElementById('shieldText').textContent = formatBig(shield);
+  } else {
+    shieldRow.style.visibility = 'hidden';
+  }
+}
+function updateRageUI(){
+  document.getElementById('rage1Text').textContent = Math.floor(S.player.rage1);
+  document.getElementById('rage1Bar').style.width = Math.min(100,S.player.rage1)+'%';
+  document.getElementById('rage2Text').textContent = Math.floor(S.player.rage2);
+  document.getElementById('rage2Bar').style.width = Math.min(100,S.player.rage2)+'%';
+}
+function addRage1(amount){
+  if (HACKS.infrage) { S.player.rage1 = 100; updateRageUI(); return; }
+  S.player.rage1 = Math.min(100, S.player.rage1 + amount);
+  updateRageUI();
+}
+function addRage2(amount){
+  if (HACKS.infrage) { S.player.rage2 = 100; updateRageUI(); return; }
+  S.player.rage2 = Math.min(100, S.player.rage2 + amount);
+  updateRageUI();
+}
+
+// ============================================================
+// COOLDOWN HELPER
+// ============================================================
+function onCooldown(key){ return false; } // ĐÃ TẮT HỒI CHIÊU CHO TẤT CẢ CHIÊU THỨC THEO YÊU CẦU
+function setCooldown(key, ms){ S.cooldowns[key] = performance.now() + ms; }
+
+// ============================================================
+// M1 / M2
+// ============================================================
+function performM1Release(holdMs){
+  autoFaceNearest();
+  const fb = getFormBoost();
+  const dmg = S.player.swordGunMode ? 100 : (25 + Math.min(1, holdMs/1200)*(60-25));
+  if (S.player.swordGunMode){
+    // Chế độ Kiếm & Súng: M1 = chém liên tục rồi bắn
+    spawnSlashFx(3);
+    spawnBulletFx(420, {color:'#ffee44', width:4, delay:0.3, formBoost:fb});
+  } else {
+    // Chế độ thường: M1 = bắn đạn vàng, gồng càng lâu đạn càng to
+    const chargeRatio = Math.min(1, holdMs/1200);
+    spawnBulletFx(380, {color:'#ffee44', width: 3 + chargeRatio*15, formBoost:fb});
+  }
+  dealDamageAll(dmg, 'M1 Đòn Thường', {range: null, facingOnly:true});
+}
+function doM2(){
+  if (onCooldown('m2')) return;
+  setCooldown('m2', 900);
+  autoFaceNearest();
+  const fb = getFormBoost();
+  if (S.player.swordGunMode){
+    // Chế độ Kiếm & Súng: M2 = phi kiếm rồi bắn súng
+    spawnSwordThrowFx();
+    spawnBulletFx(500, {color:'#ffee44', width:4, delay:0.5, formBoost:fb});
+  } else {
+    // Chế độ thường: M2 = bắn đạn xanh dương (đổi màu theo Form nếu đang biến hình)
+    spawnBulletFx(500, {color:'#3388ff', width:6, formBoost:fb});
+  }
+  dealDamageAll(50, 'M2 Choáng Xa', {range:null, stunMs:2000, facingOnly:true, isM2:true});
+}
+
+// ============================================================
+// Q DASH / E BLOCK / SPACE JUMP
+// ============================================================
+function doDash(){
+  if (onCooldown('dash')) return;
+  setCooldown('dash', 1500);
+  const fb = getFormBoost();
+  S.player.vx = S.player.facing * 34;
+  S.player.invuln = true;
+  addLog('💨 [Q] DASH!');
+  spawnParticles(S.player.x, S.player.y - S.player.size*0.6, fb ? fb.color : '#cceeff', fb ? 10 : 6);
+  setTimeout(()=>{ S.player.invuln = false; }, 250);
+}
+function startBlock(){
+  S.player.blocking = true;
+  S.player.blockHoldStart = performance.now();
+  addLog('🛡️ [E] Đang đỡ đòn — chặn hoàn toàn sát thương!');
+}
+function endBlock(){
+  S.player.blocking = false;
+}
+function doJump(){
+  if (S.player.onGround){
+    S.player.vy = -19;
+    S.player.onGround = false;
+  }
+}
+
+// ============================================================
+// SKILL DISPATCH
+// ============================================================
+// Z/X/C/V chỉ dùng được ở Chế Độ Kiếm & Súng, với vũ khí Kiếm — nay dùng được cả khi Nuclear Form / Robot Form
+function zxcvAvailable(){
+  return S.player.swordGunMode && S.player.weapon === 1;
+}
+function updateZXCVVisibility(){
+  document.getElementById('zxcvGroup').style.display = zxcvAvailable() ? 'flex' : 'none';
+}
+
+function castSkill(key){
+  autoFaceNearest();
+  switch(key){
+    // Kỹ năng thường 1/2/3/4 nay đổi phím thành Z/X/C/V — LUÔN HIỆN
+    case 'Z': skill1(); break;
+    case 'X': skill2(); break;
+    case 'C': skill3(); break;
+    case 'V': skill4(); break;
+    // Kỹ năng Kiếm & Súng cũ Z/X/C/V nay đổi phím thành B/N/M/J — CHỈ HIỆN Ở CHẾ ĐỘ KIẾM & SÚNG
+    case 'B': if (zxcvAvailable()) skillZ(); break;
+    case 'N': if (zxcvAvailable()) skillX(); break;
+    case 'M': if (zxcvAvailable()) skillC(); break;
+    case 'J': if (zxcvAvailable()) skillV(); break;
+    case 'G': skillG(); break;   // F1 — Robot Form
+    case 'H': openWeaponPopup(); break; // W3 — popup chọn vũ khí
+    case 'K': skillK(); break;
+    case 'R': if (S.player.swordGunMode) skillR(); else showSystemAlert('🔒 [R] Cần chọn "Kiếm & Súng" ở W3 để mở khóa!'); break;
+    case 'T': if (S.player.swordGunMode) skillT(); else showSystemAlert('🔒 [T] Cần chọn "Kiếm & Súng" ở W3 để mở khóa!'); break;
+    case 'Y': if (S.player.swordGunMode) skillY(); else showSystemAlert('🔒 [Y] Cần chọn "Kiếm & Súng" ở W3 để mở khóa!'); break;
+    case 'U': if (S.player.swordGunMode) skillU(); else showSystemAlert('🔒 [U] Cần chọn "Kiếm & Súng" ở W3 để mở khóa!'); break;
+    case 'I': performSelfDestruct(false); break; // D4 — tự hủy thủ công
+    case 'P': skillP(); break;   // F2 — Nuclear Form
+  }
+}
+
+function skill1(){
+  if (onCooldown('s1')) return;
+  setCooldown('s1', 2500);
+  const bonus = 1 + S.player.skill1Stacks*0.05;
+  const dmg = 70 * bonus;
+  addLog(`🔫 [Xả Đạn] Bắn liên tục! (+${((bonus-1)*100).toFixed(0)}% cộng dồn)`);
+  spawnBulletBurst(480);
+  dealDamageAll(dmg, 'Xả Đạn', {range:null});
+}
+function spawnBulletBurst(range){
+  const fb = getFormBoost();
+  const color = fb ? fb.color : '#ffee44';
+  const targets = allEnemies().filter(e=> Math.abs(e.x - S.player.x) <= range && inFront(e));
+  for (let i=0;i<5;i++){
+    if (targets.length===0){
+      const near = aimbotTarget();
+      let tx, ty;
+      if (near && inFront(near)){ tx = near.x; ty = near.y - near.size*1.1; }
+      else { tx = S.player.x+S.player.facing*400; ty = S.player.y-S.player.size*1.2; }
+      S.fx.push({ type:'bullet', delay:i*0.06, x:S.player.x, y:S.player.y - S.player.size*1.2, tx, ty, life:0.15, maxLife:0.15, color, width:3 });
+    } else {
+      targets.forEach(e=>{
+        S.fx.push({ type:'bullet', delay:i*0.06, x:S.player.x, y:S.player.y - S.player.size*1.2, tx:e.x, ty:e.y - e.size*1.1, life:0.15, maxLife:0.15, color, width:3 });
+      });
+    }
+  }
+}
+function skill2(){
+  if (onCooldown('s2')) return;
+  setCooldown('s2', 3000);
+  addLog('👊 [Đấm Kéo] Lao ra đấm rồi kéo lại đấm lần 2!');
+  spawnPunchFx();
+  spawnHookFx(200, {formBoost:getFormBoost()});
+  dealDamageAll(65, 'Đấm Kéo', {range:200, knockback:300, pull:330, facingOnly:true});
+}
+function skill3(){
+  if (onCooldown('s3')) return;
+  setCooldown('s3', 4000);
+  const targets = allEnemies(); // không giới hạn tầm nữa — luôn nhắm được toàn bộ quái/boss trên map
+  if (targets.length===0){ addLog('⚠️ [Nhện Nổ] Không có mục tiêu trong tầm!'); return; }
+  addLog('🕷️ [Nhện Nổ] Triệu hồi nhện robot lao vào kẻ địch và phát nổ!');
+  targets.forEach(e=>{
+    S.spiders.push({
+      x: S.player.x, y: S.player.y - S.player.size,
+      target: e, life: 2.0
+    });
+  });
+}
+function updateSpiders(dt){
+  S.spiders.forEach(sp=>{
+    const e = sp.target;
+    if (!e || e.isDead){ sp.life = 0; return; }
+    const dx = e.x - sp.x;
+    const dy = (e.y - e.size) - sp.y;
+    const dist = Math.hypot(dx, dy);
+    if (dist < 22){
+      // Nổ! Gây damage khi chạm mục tiêu
+      const fb = getFormBoost();
+      applyDamageToEntity(e, 55, 'Nhện Nổ', {isM2:true});
+      applyStunToEntity(e, 500);
+      spawnParticles(sp.x, sp.y, fb ? fb.color : '#ff4422', 14);
+      sp.life = 0;
+      return;
+    }
+    const speed = 620;
+    sp.x += (dx/dist) * speed * dt;
+    sp.y += (dy/dist) * speed * dt;
+    sp.life -= dt;
+  });
+  S.spiders = S.spiders.filter(sp=>sp.life>0);
+}
+function skill4(){
+  if (onCooldown('s4')) return;
+  setCooldown('s4', 6000);
+  addLog('💣 [Đại Nổ] Tích năng lượng... BÙM!');
+  const fb = getFormBoost();
+  spawnRingFx(fb ? fb.color : '#ff8822', 260, 0.5);
+  spawnRingFx(fb ? '#ffffff' : '#ffee44', 180, 0.4);
+  dealDamageAll(200, 'Đại Nổ', {range:null});
+}
+// ---- Z X C V (chỉ dùng ở Chế Độ Kiếm & Súng, vũ khí Kiếm — dùng được cả ở Nuclear/Robot Form) ----
+function skillZ(){
+  if (onCooldown('z')) return;
+  setCooldown('z', 2000);
+  addLog('⚔️🔫 [Z] Chém rồi bắn!');
+  spawnSlashFx(1);
+  spawnBulletFx(220, {formBoost:getFormBoost()});
+  dealDamageAll(35, 'Z - Chém+Bắn', {range:220, facingOnly:true});
+}
+function skillX(){
+  if (onCooldown('x')) return;
+  setCooldown('x', 2800);
+  addLog('⚔️🔫 [X] Chém liên tục rồi súng kéo địch lại gần!');
+  spawnSlashFx(3);
+  spawnHookFx(240, {formBoost:getFormBoost()});
+  dealDamageAll(45, 'X - Chém Kéo', {range:240, stunMs:500, knockback:40, pull:260, facingOnly:true});
+}
+function skillC(){
+  if (onCooldown('c')) return;
+  setCooldown('c', 3500);
+  addLog('🗡️ [C] Phóng kiếm bay xa!');
+  spawnSwordThrowFx();
+  dealDamageAll(60, 'C - Phóng Kiếm', {range:260, facingOnly:true});
+}
+function skillV(){
+  if (onCooldown('v')) return;
+  setCooldown('v', 5000);
+  addLog('⚔️ [V] Chém tích lực!');
+  spawnSlashFx(1, true);
+  dealDamageAll(120, 'V - Chém Tích Lực', {range:200, facingOnly:true});
+}
+
+// ---- Hiệu ứng hình ảnh: chém kiếm / bắn súng / kéo dây / phi kiếm ----
+function getFormBoost(){
+  if (S.player.nuclearForm) return { mult:1.5, color:'#33ff88', glow:'#33ff88', mode:'nuclear' };
+  if (S.player.transformed) return { mult:1.25, color:'#3388ff', glow:'#3388ff', mode:'robot' };
+  return null;
+}
+function spawnSlashFx(count, big){
+  const fb = getFormBoost();
+  for (let i=0;i<count;i++){
+    S.fx.push({ type:'slash', delay:i*0.08, x:S.player.x, y:S.player.y - S.player.size, dir:S.player.facing, big:!!big, life:0.22, maxLife:0.22, formBoost: fb });
+  }
+}
+function spawnBulletFx(range, opts){
+  opts = opts || {};
+  const fb = opts.formBoost;
+  const color = fb ? fb.color : (opts.color || '#ffee44');
+  const width = (opts.width || 3) * (fb ? 1.15 : 1);
+  const delay = opts.delay || 0;
+  const targets = allEnemies().filter(e=> Math.abs(e.x - S.player.x) <= range && inFront(e));
+  if (targets.length===0){
+    // Không có mục tiêu hợp lệ trong tầm — vẫn nhắm theo mục tiêu gần nhất thực tế (nếu ở phía trước)
+    // để hiệu ứng không bị lệch sang hướng khác so với vị trí quái/boss thật.
+    const near = aimbotTarget();
+    let tx, ty;
+    if (near && inFront(near)){
+      tx = near.x; ty = near.y - near.size*1.1;
+    } else {
+      tx = S.player.x + S.player.facing*400; ty = S.player.y - S.player.size*1.2;
+    }
+    S.fx.push({ type:'bullet', delay, x:S.player.x, y:S.player.y - S.player.size*1.2, tx, ty, life:0.18, maxLife:0.18, color, width });
+    return;
+  }
+  targets.forEach(e=>{
+    S.fx.push({ type:'bullet', delay, x:S.player.x, y:S.player.y - S.player.size*1.2, tx:e.x, ty:e.y - e.size*1.1, life:0.18, maxLife:0.18, color, width });
+  });
+}
+function spawnHookFx(range, opts){
+  opts = opts || {};
+  const fb = opts.formBoost;
+  const color = fb ? fb.color : opts.color;
+  const targets = allEnemies().filter(e=> Math.abs(e.x - S.player.x) <= range && inFront(e));
+  if (targets.length===0){
+    const near = aimbotTarget();
+    if (near && inFront(near)){
+      S.fx.push({ type:'hook', x:S.player.x, y:S.player.y - S.player.size*1.2, target:near, life:0.4, maxLife:0.4, visualOnly:true, color });
+    }
+    return;
+  }
+  targets.forEach(e=>{
+    S.fx.push({ type:'hook', x:S.player.x, y:S.player.y - S.player.size*1.2, target:e, life:0.4, maxLife:0.4, color });
+  });
+}
+function spawnSwordThrowFx(){
+  const near = aimbotTarget();
+  const dir = (near && inFront(near)) ? (near.x >= S.player.x ? 1 : -1) : S.player.facing;
+  const fb = getFormBoost();
+  S.fx.push({ type:'swordThrow', x:S.player.x, y:S.player.y - S.player.size*1.3, startX:S.player.x, dir, life:0.9, maxLife:0.9, formBoost:fb });
+}
+function spawnPunchFx(){
+  S.fx.push({ type:'punch', x:S.player.x, y:S.player.y - S.player.size*1.1, dir:S.player.facing, life:0.25, maxLife:0.25, formBoost: getFormBoost() });
+}
+function spawnRingFx(color, maxRadius, life, x, y){
+  S.fx.push({ type:'ring', x: x!==undefined?x:S.player.x, y: y!==undefined?y:S.player.y - S.player.size, color, maxRadius: maxRadius*FX_RING_SCALE, life: life||0.5, maxLife: life||0.5 });
+  if (GFX_MAX){
+    S.fx.push({ type:'ring', x: x!==undefined?x:S.player.x, y: y!==undefined?y:S.player.y - S.player.size, color:'#ffffff', maxRadius: maxRadius*FX_RING_SCALE*0.6, life: (life||0.5)*0.7, maxLife: (life||0.5)*0.7 });
+  }
+}
+function spawnBeamFx(x, color){
+  S.fx.push({ type:'beam', x, color, life:0.4, maxLife:0.4 });
+}
+function spawnFlashFx(color, life){
+  S.fx.push({ type:'flash', color, life: life||0.35, maxLife: life||0.35 });
+}
+function updateFx(dt){
+  S.fx.forEach(f=>{
+    if (f.delay && f.delay>0){ f.delay -= dt; return; }
+    if (f.type==='bullet'){
+      const t = 1 - Math.max(0,f.life)/f.maxLife;
+      f.curX = f.x + (f.tx - f.x)*t;
+      f.curY = f.y + (f.ty - f.y)*t;
+    }
+    if (f.type==='swordThrow'){
+      const t = 1 - Math.max(0,f.life)/f.maxLife;
+      const range = 260;
+      // bay ra xa rồi bay ngược trở lại trong nửa sau
+      const out = t<0.5 ? (t*2) : (2-t*2);
+      f.curX = f.startX + f.dir*range*out;
+      f.curY = f.y - Math.sin(t*Math.PI)*40;
+      f.rot = t*Math.PI*6;
+    }
+    f.life -= dt;
+  });
+  S.fx = S.fx.filter(f=>f.life>0);
+  // FIX LAG: cắt bớt fx CŨ NHẤT nếu vượt trần — tránh giật khi nhiều hiệu ứng chồng lên nhau cùng lúc
+  if (S.fx.length > MAX_FX) S.fx.splice(0, S.fx.length - MAX_FX);
+}
+function drawFx(){
+  S.fx.forEach(f=>{
+    if (f.delay && f.delay>0) return;
+    const alpha = Math.max(0, f.life/f.maxLife);
+    if (f.type==='slash'){
+      const fb = f.formBoost;
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      ctx.translate(f.x + f.dir*18, f.y - 10);
+      ctx.rotate(f.dir>0 ? -0.7 : Math.PI+0.7);
+      const slashColor = fb ? fb.color : (f.big ? '#ff33aa' : '#e0f2ff');
+      const slashR = (f.big ? 44 : 32) * (fb ? fb.mult : 1);
+      // FIX SỌC: glow bằng lớp stroke mờ dày hơn phía dưới thay vì shadowBlur (shadowBlur chồng
+      // nhiều lớp/frame gây hiệu ứng rạn/sọc nhẹ trên canvas, đặc biệt khi nhiều fx chồng nhau).
+      ctx.globalAlpha = alpha*0.4;
+      ctx.strokeStyle = fb ? fb.glow : slashColor;
+      ctx.lineWidth = ((f.big ? 6 : 4) * (fb ? fb.mult : 1)) + 7;
+      ctx.beginPath();
+      ctx.arc(0, 0, slashR, -0.9, 0.9);
+      ctx.stroke();
+      ctx.globalAlpha = alpha;
+      ctx.strokeStyle = slashColor;
+      ctx.lineWidth = (f.big ? 6 : 4) * (fb ? fb.mult : 1);
+      ctx.beginPath();
+      ctx.arc(0, 0, slashR, -0.9, 0.9);
+      ctx.stroke();
+      ctx.restore();
+    } else if (f.type==='bullet'){
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      const c = f.color || '#ffee44';
+      const bx1=f.x, by1=f.y, bx2=(f.curX!==undefined?f.curX:f.x), by2=(f.curY!==undefined?f.curY:f.y);
+      const bw = f.width || 3;
+      // FIX SỌC: glow bằng lớp stroke mờ dày hơn thay vì shadowBlur
+      ctx.strokeStyle = c;
+      ctx.globalAlpha = alpha*0.35;
+      ctx.lineWidth = bw + 5;
+      ctx.beginPath();
+      ctx.moveTo(bx1, by1);
+      ctx.lineTo(bx2, by2);
+      ctx.stroke();
+      ctx.globalAlpha = alpha;
+      ctx.lineWidth = bw;
+      ctx.beginPath();
+      ctx.moveTo(bx1, by1);
+      ctx.lineTo(bx2, by2);
+      ctx.stroke();
+      // đầu đạn — to hơn nếu gồng lâu (M1)
+      ctx.fillStyle = c;
+      ctx.beginPath();
+      ctx.arc(f.curX!==undefined?f.curX:f.x, f.curY!==undefined?f.curY:f.y, Math.max(2,(f.width||3)*0.7), 0, Math.PI*2);
+      ctx.fill();
+      ctx.restore();
+    } else if (f.type==='hook'){
+      const e = f.target;
+      if (!e) return;
+      const hc = f.color || '#ff8844';
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      ctx.strokeStyle = hc;
+      ctx.lineWidth = 3;
+      ctx.setLineDash([8,6]);
+      ctx.beginPath();
+      ctx.moveTo(f.x, f.y);
+      ctx.lineTo(e.x, e.y - e.size);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.fillStyle = hc;
+      ctx.beginPath(); ctx.arc(e.x, e.y-e.size, 5, 0, Math.PI*2); ctx.fill();
+      ctx.restore();
+    } else if (f.type==='swordThrow'){
+      const fb = f.formBoost;
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      ctx.translate(f.curX!==undefined?f.curX:f.x, f.curY!==undefined?f.curY:f.y);
+      if (fb){
+        ctx.fillStyle = fb.color;
+        ctx.globalAlpha = alpha*0.35;
+        ctx.beginPath(); ctx.arc(0, 0, 16, 0, Math.PI*2); ctx.fill();
+        ctx.globalAlpha = alpha;
+      }
+      ctx.rotate(f.rot||0);
+      ctx.font = '22px monospace'; ctx.textAlign='center';
+      ctx.fillText('🗡️', 0, 0);
+      ctx.restore();
+    } else if (f.type==='punch'){
+      const t = 1 - Math.max(0,f.life)/f.maxLife;
+      const out = t<0.5 ? (t*2) : (2-t*2);
+      const fb = f.formBoost;
+      const px = f.x + f.dir*out*70, py = f.y;
+      ctx.save();
+      // FIX SỌC: glow bằng radial gradient thay vì shadowBlur
+      if (fb){
+        const pr = 20*fb.mult;
+        const pGrad = ctx.createRadialGradient(px,py,0, px,py,pr);
+        pGrad.addColorStop(0, fb.glow); pGrad.addColorStop(1, fb.glow+'00');
+        ctx.globalAlpha = alpha*0.5;
+        ctx.fillStyle = pGrad;
+        ctx.beginPath(); ctx.arc(px,py,pr,0,Math.PI*2); ctx.fill();
+      }
+      ctx.globalAlpha = alpha;
+      ctx.font = (fb ? 24*fb.mult : 24) + 'px monospace'; ctx.textAlign='center';
+      ctx.fillText('👊', px, py);
+      ctx.restore();
+    } else if (f.type==='ring'){
+      const t = 1 - Math.max(0,f.life)/f.maxLife;
+      const ringLw = GFX_MAX ? 8 : 5;
+      const ringR = f.maxRadius*t;
+      ctx.save();
+      // FIX SỌC: glow bằng lớp stroke mờ dày hơn thay vì shadowBlur
+      ctx.globalAlpha = alpha*0.9*0.4;
+      ctx.strokeStyle = f.color;
+      ctx.lineWidth = ringLw + 8*FX_GLOW_SCALE;
+      ctx.beginPath();
+      ctx.arc(f.x, f.y, ringR, 0, Math.PI*2);
+      ctx.stroke();
+      ctx.globalAlpha = alpha*0.9;
+      ctx.strokeStyle = f.color;
+      ctx.lineWidth = ringLw;
+      ctx.beginPath();
+      ctx.arc(f.x, f.y, f.maxRadius*t, 0, Math.PI*2);
+      ctx.stroke();
+      ctx.restore();
+    } else if (f.type==='beam'){
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      const grad = ctx.createLinearGradient(f.x, 0, f.x, S.groundY);
+      grad.addColorStop(0, f.color); grad.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.fillStyle = grad;
+      ctx.fillRect(f.x-10, 0, 20, S.groundY);
+      ctx.restore();
+    } else if (f.type==='flash'){
+      ctx.save();
+      ctx.globalAlpha = alpha*0.55;
+      ctx.fillStyle = f.color;
+      ctx.fillRect(S.player.x-2000, 0, 4000, canvas.height);
+      ctx.restore();
+    } else if (f.type==='gearHit'){
+      // Bánh răng nhỏ văng ra khi trúng đòn (Robot Form)
+      const t = 1 - Math.max(0,f.life)/f.maxLife;
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      ctx.strokeStyle = 'rgba(80,180,255,0.9)';
+      ctx.lineWidth = 1.5;
+      ctx.beginPath(); ctx.arc(f.x, f.y, 6+t*14, 0, Math.PI*2); ctx.stroke();
+      for (let i=0;i<4;i++){
+        const ang = i*(Math.PI/2) + t*4;
+        const rx = f.x + Math.cos(ang)*(4+t*16);
+        const ry = f.y + Math.sin(ang)*(4+t*16);
+        ctx.save();
+        ctx.translate(rx, ry);
+        ctx.rotate(ang*2);
+        ctx.fillStyle = '#3388ff';
+        ctx.fillRect(-2.5, -2.5, 5, 5);
+        ctx.restore();
+      }
+      ctx.restore();
+    } else if (f.type==='radHit'){
+      // Xung phóng xạ khi trúng đòn (Nuclear Form) — hoặc dùng riêng cho hiệu ứng K theo form (màu/icon tùy chỉnh)
+      const t = 1 - Math.max(0,f.life)/f.maxLife;
+      const rc = f.color || '51,255,136'; // rgb "r,g,b" dạng chuỗi để ghép vào rgba(...)
+      const icon = f.icon || '☢️';
+      ctx.save();
+      ctx.globalAlpha = alpha*0.8;
+      const r = 4 + t*20;
+      const grad = ctx.createRadialGradient(f.x, f.y, 0, f.x, f.y, r);
+      grad.addColorStop(0, `rgba(${rc},0.6)`);
+      grad.addColorStop(1, `rgba(${rc},0)`);
+      ctx.fillStyle = grad;
+      ctx.beginPath(); ctx.arc(f.x, f.y, r, 0, Math.PI*2); ctx.fill();
+      if (t>0.35){
+        ctx.globalAlpha = alpha;
+        ctx.font='11px monospace'; ctx.textAlign='center';
+        ctx.fillText(icon, f.x, f.y - r*0.5);
+      }
+      ctx.restore();
+    }
+  });
+  ctx.globalAlpha = 1;
+}
+
+// ---- F: GIỮ ĐỂ PHUN LỬA LIÊN TỤC, THẢ RA THÌ DỪNG NGAY ----
+let fChannelInterval = null;
+function startFChannel(){
+  if (onCooldown('f')) return;
+  if (S.player.fCharging) return;
+  S.player.fCharging = true;
+  S.player.channeling = true;
+  addLog('🔥 [F] Đang giữ — phun lửa 5,000 DMG mỗi 0.005 giây + choáng địch!');
+  const fChannelStart = Date.now();
+  const F_MAX_HOLD_MS = 20000; // failsafe max 20s giữ liên tục (tính theo thời gian thực, không theo số tick)
+  // Đánh ngay lập tức khi vừa nhấn giữ, không đợi đủ 1 tick mới ra đòn đầu tiên
+  dealDamageAll(5000, 'Phun Lửa (giữ)', {range:null, stunMs:1100});
+  fChannelInterval = setInterval(()=>{
+    // 5,000 dmg mỗi 0.005 giây (5ms), toàn map. stunMs:1100 để địch luôn bị choáng liên tục khi còn giữ phím.
+    dealDamageAll(5000, 'Phun Lửa (giữ)', {range:null, stunMs:1100});
+    if (Date.now() - fChannelStart >= F_MAX_HOLD_MS){ endFChannel(); } // failsafe max 20s giữ liên tục
+  }, 5);
+}
+function endFChannel(){
+  if (!S.player.fCharging) return;
+  S.player.fCharging = false;
+  S.player.channeling = false;
+  clearInterval(fChannelInterval);
+  fChannelInterval = null;
+  setCooldown('f', 6000);
+  // Thả tay: để lại lửa cháy 500 DMG/giây trong 25 giây lên TOÀN BỘ kẻ địch (không giới hạn khoảng cách)
+  let hit = 0;
+  allEnemies().forEach(e=>{ applyDotToEntity(e, 500, 25, 'fire'); applyStunToEntity(e, 1000); hit++; });
+  addLog(`🔥 [F] Thả tay — choáng 1s + để lại lửa cháy 500 DMG/giây trong 25 giây lên ${hit} mục tiêu!`);
+}
+function skillG(){
+  // F1 — Robot Form — cấm chèn khi đang ở Nuclear Form
+  if (S.player.transformed){
+    S.player.transformed = false;
+    // (Đã bỏ dòng reset swordGunMode=false ở đây — trước đây thoát Robot Form sẽ khóa luôn
+    // R/T/Y/U/B/N/M/J dù người chơi đang ở Chế Độ Kiếm & Súng, phải mở lại popup W3 mới dùng được.)
+    S.player.size = S.player.baseSize;
+    updateNuclearPassiveBtnState();
+    document.getElementById('badgeForm').textContent = 'FORM: THƯỜNG';
+    document.getElementById('badgeMode').textContent = 'CHẾ ĐỘ: ' + (S.player.swordGunMode ? 'S & G' : 'THƯỜNG');
+    updateZXCVVisibility();
+    updateLockedSkillBtns();
+    spawnRingFx('#888899', 160, 0.3);
+    addLog('🤖 Robot Form TẮT — trở về bình thường.');
+    return;
+  }
+  if (S.player.nuclearForm){ showSystemAlert('🚫 [F1] Không thể vào Robot Form khi đang ở Nuclear Form!'); return; }
+  if (S.player.rage1 < 100 && !HACKS.infrage){ showSystemAlert('🔥 Cần đầy thanh Chiến Ý (Rage 1) để Robot hóa!'); return; }
+  S.player.rage1 = 0; updateRageUI();
+  S.player.transformed = true;
+  S.player.weapon = 2; S.player.swordGunMode = false;
+  document.getElementById('badgeWeapon').textContent = 'VŨ KHÍ: SÚNG';
+  S.player.size = S.player.baseSize * 2.5;
+  document.getElementById('badgeForm').textContent = 'FORM: ROBOT ⚙️';
+  spawnFlashFx('#33eaff', 0.3);
+  spawnRingFx('#33eaff', 340, 0.5);
+  spawnRingFx('#ffffff', 200, 0.35);
+  addLog('🤖 BIẾN HÌNH ROBOT! +100% Sát Thương, kích thước x2.5!');
+}
+function skillH(){
+  // đổi vũ khí trực tiếp (giữ tương thích) — nay chủ yếu dùng qua popup W3
+  S.player.weapon = S.player.weapon === 1 ? 2 : 1;
+  document.getElementById('badgeWeapon').textContent = 'VŨ KHÍ: ' + (S.player.weapon===1?'KIẾM':'SÚNG');
+  addLog('🔄 [H] Đổi sang vũ khí ' + (S.player.weapon===1?'KIẾM':'SÚNG') + '!');
+  updateZXCVVisibility();
+}
+function skillK(){
+  if (S.player.rage2 < 100 && !HACKS.infrage){ showSystemAlert('☢️ Năng Lượng Hạt Nhân (Rage 2) chưa đầy!'); return; }
+  S.player.rage2 = 0; updateRageUI();
+  addLog('☢️☢️☢️ [K] ATOMIC OVERLOAD — ONE-SHOT TOÀN BỘ KẺ ĐỊCH!');
+  const kFb = getFormBoost();
+  // Màu phóng xạ RIÊNG cho từng form — Nuclear = xanh lá SIÊU ĐẬM/rực để tách biệt hẳn với 2 form còn lại
+  const kColor = kFb ? (kFb.mode==='nuclear' ? '#00ff44' : kFb.mode==='robot' ? '#0066ff' : kFb.color) : '#66ff88';
+  const kMult = kFb ? kFb.mult : 1; // Nuclear 1.5x, Robot 1.25x, Thường 1x — ring/flash/mảnh vỡ scale theo form
+  spawnFlashFx(kColor, 0.4 * (kFb ? 1 + (kMult-1)*0.5 : 1));
+  spawnRingFx(kColor, 500 * kMult, 0.7);
+  spawnRingFx('#ffffff', 320 * kMult, 0.45);
+  // Vòng ring thứ 3 + mảnh vỡ văng ra riêng theo từng Form — làm rõ khác biệt hình ảnh giữa 3 form
+  if (kFb && kFb.mode==='nuclear'){
+    spawnRingFx('#00ff44', 650, 0.9);  // vòng xanh lá siêu đậm, to hơn cả 2 vòng trên
+    spawnRingFx('#003311', 720, 1.0);  // viền ngoài tối màu tạo cảm giác phóng xạ "nặng đô", tương phản với xanh rực bên trong
+    addLog('☢️ [K] Nuclear Form khuếch đại Atomic Overload — phóng xạ XANH LÁ SIÊU ĐẬM lan RỘNG hơn 50%!');
+    for (let i=0;i<10;i++){
+      const ang = (i/10)*Math.PI*2;
+      const rx = S.player.x + Math.cos(ang)*60, ry = (S.player.y - S.player.size) + Math.sin(ang)*60;
+      S.fx.push({ type:'radHit', x:rx, y:ry, delay:i*0.03, life:0.5, maxLife:0.5, color:'0,255,60' });
+    }
+  } else if (kFb && kFb.mode==='robot'){
+    spawnRingFx('#0066ff', 560, 0.8);
+    addLog('🤖 [K] Robot Form khuếch đại Atomic Overload — thêm 25% phạm vi (phóng xạ XANH DƯƠNG đậm)!');
+    for (let i=0;i<8;i++){
+      const ang = (i/8)*Math.PI*2;
+      const rx = S.player.x + Math.cos(ang)*60, ry = (S.player.y - S.player.size) + Math.sin(ang)*60;
+      S.fx.push({ type:'gearHit', x:rx, y:ry, delay:i*0.03, life:0.45, maxLife:0.45 });
+    }
+  }
+  allEnemies().forEach(e=>{ applyDamageToEntity(e, e.hp+999999, 'K - Atomic One-Shot'); applyDotToEntity(e, 10000, 30, 'atomicHeavy'); });
+  // Để lại vùng phóng xạ NẶNG — quái/boss hồi sinh trong 30 giây tới sẽ dính phóng xạ nặng 10,000 DMG/giây trong 30 giây
+  S.atomicZoneUntil = performance.now() + 30000;
+  addLog('☢️ [K] Vùng phóng xạ NẶNG tồn tại 30 giây — quái/boss hồi sinh trong lúc này sẽ dính 10,000 DMG/giây trong 30 giây!');
+}
+
+// ---- Sword & Gun exclusive skills ----
+function skillR(){
+  if (onCooldown('r')) return;
+  setCooldown('r', 8000);
+  addLog('🌀 [R] Khống chế đám đông — choáng toàn bộ kẻ địch!');
+  spawnRingFx('#44ccff', 480, 0.55);
+  spawnRingFx('#ffffff', 260, 0.35);
+  dealDamageAll(40, 'R - Khống Chế', {range:null, stunMs:4000});
+}
+function skillT(){
+  if (onCooldown('t')) return;
+  setCooldown('t', 20000);
+  addLog('☄️ [T] "XÓA SỔ TẤT CẢ" — sát thương VÔ HẠN!');
+  spawnFlashFx('#ff2222', 0.5);
+  spawnRingFx('#ff2222', 600, 0.7);
+  allEnemies().forEach(e=>applyDamageToEntity(e, e.hp + 999999999, 'T - Xóa Sổ'));
+}
+function skillY(){
+  if (onCooldown('y')) return;
+  setCooldown('y', 15000);
+  addLog('💥 [Y] Tiểu nổ!');
+  spawnRingFx('#ff8822', 340, 0.5);
+  spawnRingFx('#ffee44', 220, 0.35);
+  dealDamageAll(50000, 'Y - Tiểu Nổ', {range:null});
+}
+function skillU(){
+  if (onCooldown('u')) return;
+  setCooldown('u', 30000);
+  addLog('🌈 [U] Cầu vồng lửa 10 giây!');
+  const rainbow = ['#ff3333','#ff9933','#ffee33','#33ff66','#33ccff','#6633ff','#ff33cc'];
+  let ticks=0;
+  const iv = setInterval(()=>{
+    const targets = allEnemies();
+    targets.forEach((e,i)=> spawnBeamFx(e.x, rainbow[(ticks+i)%rainbow.length]));
+    if (targets.length===0) spawnBeamFx(S.player.x + S.player.facing*300, rainbow[ticks%rainbow.length]);
+    ticks++;
+    dealDamageAll(10000, 'U - Cầu Vồng Lửa', {range:null});
+    if (ticks>=10) clearInterval(iv);
+  }, 1000);
+}
+function skillI(){
+  if (onCooldown('i')) return;
+  setCooldown('i', 18000);
+  addLog('☢️ [I] Tích súng... TẠO VỤ NỔ HẠT NHÂN!');
+  dealDamageAll(80000, 'I - Nổ Hạt Nhân', {range:null, dotPerSec:1000, dotSec:15});
+}
+function skillP(){
+  // F2 — Nuclear Form — cấm chèn khi đang ở Robot Form
+  if (!S.player.nuclearForm){
+    if (S.player.transformed){ showSystemAlert('🚫 [F2] Không thể vào Nuclear Form khi đang ở Robot Form!'); return; }
+    S.player.nuclearForm = true;
+    S.player.weapon = 2; S.player.swordGunMode = false;
+    document.getElementById('badgeWeapon').textContent = 'VŨ KHÍ: SÚNG';
+    addLog('☢️ [P] BIẾN HÌNH NUCLEAR! (Không cần đầy Năng Lượng Hạt Nhân) +500% DMG, phản 300%, gây phóng xạ khi tấn công/phản đòn!');
+    document.getElementById('badgeForm').textContent = 'FORM: NUCLEAR ☢️';
+    spawnFlashFx('#33ff88', 0.45);
+    spawnRingFx('#33ff88', 450, 0.6);
+    spawnRingFx('#ffffff', 260, 0.4);
+  } else {
+    S.player.nuclearForm = false;
+    addLog('☢️ [P] Thoát Nuclear Form.');
+    document.getElementById('badgeForm').textContent = S.player.transformed ? 'FORM: ROBOT ⚙️' : 'FORM: THƯỜNG';
+    spawnRingFx('#335533', 180, 0.3);
+    // Không reset nuclearPassiveStun khi thoát Nuclear Form — cài đặt được giữ lại kể cả khi chưa/không dùng Nuclear Form.
+  }
+  updateZXCVVisibility();
+  updateNuclearPassiveBtnState();
+}
+// Nút O trong HUD: LUÔN bấm được, kể cả khi đang hay chưa ở Nuclear Form.
+// Bật/tắt hiệu ứng choáng sẽ được lưu lại và tự áp dụng ngay khi Nuclear Form kích hoạt.
+function updateNuclearPassiveBtnState(){
+  const btn = document.getElementById('toggleONuclearBtn');
+  btn.disabled = false;
+  btn.style.cursor = 'pointer';
+  btn.style.background = S.player.nuclearPassiveStun ? '#00aa44' : '#1a5c2a';
+  btn.style.color = '#ccffdd';
+  btn.textContent = '[O] HÚT MÁU NUCLEAR: ' + (S.player.nuclearPassiveStun?'BẬT':'TẮT') + (S.player.nuclearForm ? '' : ' (chờ Nuclear Form)');
+}
+function toggleNuclearPassive(){
+  S.player.nuclearPassiveStun = !S.player.nuclearPassiveStun;
+  addLog(S.player.nuclearPassiveStun
+    ? '☢️ [O] Khống chế phóng xạ thụ động BẬT' + (S.player.nuclearForm ? ' — kẻ địch quanh bạn liên tục bị choáng!' : ' — sẽ tự kích hoạt khi vào Nuclear Form.')
+    : '☢️ [O] Khống chế phóng xạ thụ động TẮT.');
+  updateNuclearPassiveBtnState();
+}
+
+// ============================================================
+// ENEMY AI / DAMAGE TICK
+// ============================================================
+function damageTick(dt, rawDt){
+  rawDt = (rawDt === undefined) ? dt : rawDt;
+  const now = performance.now();
+  // enemy DOT (lửa / phóng xạ / phóng xạ nặng) — mỗi kênh (tag) tự đếm đủ 1 GIÂY THỰC rồi mới trừ
+  // đúng 1 lần, đúng số nguyên cố định (perSec) — không random, giống hệt cơ chế của bản PC2.
+  allEnemies().forEach(e=>{
+    if (!e.dots) e.dots = {};
+    let totalHpLoss = 0;
+    Object.keys(e.dots).forEach(tag=>{
+      const d = e.dots[tag];
+      if (d.until > now){
+        d.secAccum = (d.secAccum||0) + rawDt;
+        let dmgThisFrame = 0;
+        while (d.secAccum >= 1){
+          dmgThisFrame += d.perSec; // luôn trừ đúng số nguyên cố định mỗi giây, không random
+          d.secAccum -= 1;
+        }
+        if (dmgThisFrame > 0){
+          totalHpLoss += dmgThisFrame;
+          const meta = DOT_VISUALS[tag] || DOT_VISUALS.default;
+          let dispColor = meta.color, dispIcon = meta.icon;
+          if (tag === 'fire'){
+            const fFb = getFormBoost();
+            if (fFb){ dispColor = fFb.color; dispIcon = fFb.mode==='robot' ? '⚡' : '☢️'; }
+          }
+          spawnFloatText(e.x, e.y - e.size - 10 - meta.yOff, '-'+formatBig(dmgThisFrame)+' '+dispIcon, dispColor);
+          spawnParticles(e.x, e.y - e.size/2, dispColor, 3);
+        }
+      } else {
+        delete e.dots[tag];
+      }
+    });
+    if (totalHpLoss > 0){
+      e.hp -= totalHpLoss;
+      if (e.hp<=0 && !e.isDead){ e.hp=0; e.isDead=true; e.deadTimer=0; S.player.kills += isBossEntity(e)?5:1; document.getElementById('killText').textContent=S.player.kills; addLog((isBossEntity(e)?'💀 BOSS':'💀 QUÁI #'+e.id)+' chết vì phóng xạ!'); }
+    }
+  });
+  updateEnemyHpUI();
+
+  // boss/mob attacks on player if close, every 0.5s
+  [S.boss, ...S.mobs].forEach(e=>{
+    if (e.isDead) return;
+    if (S.player.nuclearForm && S.player.nuclearPassiveStun){
+      // passive stun (nuclear) xuyên toàn map — áp dụng cho MỌI kẻ địch bất kể khoảng cách
+      // LƯU Ý: phải kiểm tra TRƯỚC điều kiện stunnedUntil bên dưới, nếu không chính nó tự stun rồi
+      // bị chặn lại ở khung hình kế tiếp khiến hút máu gần như không chạy!
+      e.stunnedUntil = now + 600;
+      // Hiệu ứng dây hút HP xanh lá từ quái về người chơi (vẽ liên tục khi đang hút)
+      if (Math.random() < 0.3) S.fx.push({ type:'hook', x:S.player.x, y:S.player.y-S.player.size, target:e, life:0.25, maxLife:0.25, color:'#33ff88' });
+      // Hút 50,000 HP/giây từ quái/boss — hồi máu cho player, dư ra (khi đầy máu) thì cộng dồn thành GIÁP ẢO
+      const drainAmt = 50000*rawDt;
+      e.hp -= drainAmt;
+      const newHp = S.player.hp + drainAmt;
+      if (newHp > S.player.maxHp){
+        const overflow = newHp - S.player.maxHp;
+        S.player.hp = S.player.maxHp;
+        S.player.shield = (S.player.shield||0) + overflow;
+      } else {
+        S.player.hp = newHp;
+      }
+      updatePlayerHpUI();
+      // Phóng xạ: thêm 5,000 HP/giây trong 20 giây (cộng dồn thời gian khi vẫn còn bị khống chế)
+      applyDotToEntity(e, 5000, 20, 'nuclearRadiation');
+      // Duy trì vùng phóng xạ nội tại — quái/boss hồi sinh trong lúc Nuclear Form + O đang bật vẫn dính phóng xạ
+      S.nuclearZoneUntil = now + 20000;
+      if (e.hp <= 0 && !e.isDead){
+        e.hp = 0; e.isDead = true; e.deadTimer = 0;
+        S.player.kills += isBossEntity(e) ? 5 : 1;
+        document.getElementById('killText').textContent = S.player.kills;
+        addLog((isBossEntity(e)?'💀 BOSS':'💀 QUÁI #'+e.id)+' chết vì hút HP phóng xạ!');
+      }
+      return;
+    }
+    if (e.stunnedUntil && e.stunnedUntil > now) return;
+    const dist = Math.abs(e.x - S.player.x);
+    const range = isBossEntity(e) ? 90 : 70;
+    if (dist < range){
+      e.atkCd = (e.atkCd||0) - dt;
+      if (e.atkCd <= 0){
+        e.atkCd = 0.5;
+        damagePlayer(isBossEntity(e)?50:20, isBossEntity(e)?'BOSS':'Quái #'+e.id, e);
+      }
+    } else {
+      e.atkCd = 0;
+    }
+  });
+
+  // NUCLEAR FORM: PHÓNG XẠ tự động phủ toàn map — luôn chạy khi ở Nuclear Form,
+  // KHÔNG cần bật thêm O, KHÔNG cần bị quái tấn công/phản đòn
+  if (S.player.nuclearForm){
+    allEnemies().forEach(e=>applyDotToEntity(e, 5000, 20, 'nuclearRadiation'));
+  }
+
+  // GOD MODE: vòng bất tử xuyên map quanh người chơi — quái/boss chạm vào là chết ngay
+  if (HACKS.godmode){
+    const RING_RADIUS = 8000; // "xuyên map" — bán kính cực lớn, coi như phủ toàn bản đồ
+    allEnemies().forEach(e=>{
+      if (Math.abs(e.x - S.player.x) <= RING_RADIUS){
+        applyDamageToEntity(e, e.hp + 999999, 'VÒNG BẤT TỬ');
+      }
+    });
+  }
+
+  // AUTO KILL: gom quái+boss lại 1 chỗ, choáng chúng, đứng lên đầu quái/boss cách 10px, spam M1 mỗi frame
+  if (HACKS.autokill){
+    const enemies = allEnemies();
+    if (enemies.length){
+      const gatherX = enemies[0].x;
+      let topEntity = enemies[0];
+      enemies.forEach(e=>{
+        e.x += (gatherX - e.x) * 0.35; // gom lại gần nhau
+        applyStunToEntity(e, 1000);     // choáng chúng
+        if (e.size > topEntity.size) topEntity = e;
+      });
+      // đứng lên đầu quái/boss, cách 10px
+      S.player.x = gatherX;
+      S.player.y = S.groundY - topEntity.size*1.6 - 10;
+      S.player.onGround = false; S.player.vy = 0;
+      // spam M1 tốc độ 0.000000001s = mỗi frame luôn
+      dealDamageAll(60, 'M1 Đòn Thường (AUTO KILL)', {range:null});
+    }
+  }
+  // Freeze hack
+  if (HACKS.freeze){
+    allEnemies().forEach(e=> e.stunnedUntil = now+500);
+  }
+
+  // Respawns
+  [S.boss, ...S.mobs].forEach(e=>{
+    if (e.isDead){
+      e.deadTimer += dt;
+      if (e.deadTimer >= 5){
+        e.isDead = false;
+        e.hp = e.maxHp;
+        addLog((isBossEntity(e)?'💀 BOSS':'💀 Quái #'+e.id)+' HỒI SINH!');
+        // K/Nuke để lại phóng xạ NẶNG dư — quái hồi sinh trong vùng nhiễm xạ sẽ dính DOT
+        if (S.atomicZoneUntil && S.atomicZoneUntil > now){
+          applyDotToEntity(e, 10000, 30, 'atomicHeavy');
+          addLog((isBossEntity(e)?'☢️ BOSS':'☢️ Quái #'+e.id)+' hồi sinh giữa vùng phóng xạ NẶNG — dính 10,000 DMG/giây trong 30s!');
+        }
+        // Nội tại Nuclear Form (O) để lại vùng phóng xạ — quái hồi sinh trong lúc này vẫn dính phóng xạ
+        if (S.nuclearZoneUntil && S.nuclearZoneUntil > now){
+          applyDotToEntity(e, 5000, 20, 'nuclearRadiation');
+          addLog((isBossEntity(e)?'☢️ BOSS':'☢️ Quái #'+e.id)+' hồi sinh giữa vùng phóng xạ Nuclear — dính 5,000 DMG/giây trong 20s!');
+        }
+      }
+    }
+  });
+  updateEnemyHpUI();
+}
+
+// ============================================================
+// PHYSICS / MOVEMENT
+// ============================================================
+const keys = {};
+let moveDir = 0; // from joystick or keys
+function applyMovement(dt){
+  const speedMult = hackSpeedMultiplier;
+  let dir = moveDir;
+  if (keys['a']||keys['A']||keys['ArrowLeft']) dir = -1;
+  if (keys['d']||keys['D']||keys['ArrowRight']) dir = 1;
+  if (dir !== 0){ S.player.facing = dir; S.player.x += dir * PLAYER_BASE_SPEED * speedMult; }
+  // dash decel
+  if (Math.abs(S.player.vx) > 0.5){
+    S.player.x += S.player.vx;
+    S.player.vx *= 0.85;
+  } else S.player.vx = 0;
+
+  // gravity/jump
+  S.player.vy += 0.9;
+  S.player.y += S.player.vy;
+  if (S.player.y >= S.groundY){ S.player.y = S.groundY; S.player.vy = 0; S.player.onGround = true; }
+
+  // mob wander
+  [S.boss, ...S.mobs].forEach(e=>{
+    if (e.isDead) return;
+    if (e.stunnedUntil && e.stunnedUntil > performance.now()) return;
+    const dist = e.x - S.player.x;
+    if (Math.abs(dist) > (isBossEntity(e)?85:65)){
+      e.x += dist>0 ? (isBossEntity(e)?-2.3:-2.8) : (isBossEntity(e)?2.3:2.8);
+    }
+  });
+}
+
+// ============================================================
+// INPUT — KEYBOARD
+// ============================================================
+window.addEventListener('keydown', e=>{
+  const k = e.key;
+  keys[k] = true;
+  if (k==='Escape'){ closeAllPopups(); document.getElementById('hackPanel').style.display='none'; return; }
+  // ---- Popup chọn vũ khí đang mở: W/S điều hướng, Enter xác nhận ----
+  if (weaponPopupOpen){
+    if (k==='w'||k==='W'||k==='ArrowUp'){ e.preventDefault(); weaponPopupIndex = (weaponPopupIndex - 1 + weaponOptions.length) % weaponOptions.length; renderWeaponOptions(); return; }
+    if (k==='s'||k==='S'||k==='ArrowDown'){ e.preventDefault(); weaponPopupIndex = (weaponPopupIndex + 1) % weaponOptions.length; renderWeaponOptions(); return; }
+    if (k==='Enter'){ e.preventDefault(); confirmWeaponSelection(); return; }
+    return;
+  }
+  if (k===' '){ e.preventDefault(); doJump(); return; }
+  if (k==='q'||k==='Q'){ doDash(); return; }
+  if (k==='e'||k==='E'){ if (!S.player.blocking) startBlock(); return; }
+  if (k==='`'||k==='~'){ toggleHackPanel(); return; }
+  if (k==='Tab'){ e.preventDefault(); toggleTabHelp(); return; }
+  if (k==='f'||k==='F'){ if (!e.repeat) startFChannel(); return; }
+  if (k==='o'||k==='O'){ toggleNuclearPassive(); return; }
+  if (['g','G','h','H','k','K','r','R','t','T','y','Y','u','U','i','I','p','P','z','Z','x','X','c','C','v','V','b','B','n','N','m','M','j','J'].includes(k)){
+    castSkill(k.toUpperCase());
+  }
+});
+window.addEventListener('keyup', e=>{
+  keys[e.key] = false;
+  if (e.key==='e'||e.key==='E') endBlock();
+  if (e.key==='f'||e.key==='F') endFChannel();
+});
+canvas.addEventListener('mousedown', e=>{
+  if (e.button===0){ S.player.m1Holding = true; S.player.m1HoldStart = performance.now(); }
+  if (e.button===2){ doM2(); }
+});
+canvas.addEventListener('mouseup', e=>{
+  if (e.button===0 && S.player.m1Holding){
+    S.player.m1Holding = false;
+    performM1Release(performance.now() - S.player.m1HoldStart);
+  }
+});
+canvas.addEventListener('contextmenu', e=> e.preventDefault());
+
+// ============================================================
+// INPUT — TOUCH (joystick + buttons)
+// ============================================================
+const joyZone = document.getElementById('joyZone');
+const joyKnob = document.getElementById('joyKnob');
+let joyTouchId = null;
+function joyStart(e){
+  const t = e.changedTouches ? e.changedTouches[0] : e;
+  joyTouchId = e.changedTouches ? t.identifier : 'mouse';
+  joyMove(e);
+}
+function joyMove(e){
+  if (joyTouchId===null) return;
+  const rect = joyZone.getBoundingClientRect();
+  const t = e.changedTouches ? [...e.changedTouches].find(tt=>tt.identifier===joyTouchId) : e;
+  if (!t) return;
+  let dx = t.clientX - (rect.left+rect.width/2);
+  const max = 40;
+  dx = Math.max(-max, Math.min(max, dx));
+  joyKnob.style.transform = `translate(calc(-50% + ${dx}px), -50%)`;
+  moveDir = Math.abs(dx) > 8 ? Math.sign(dx) : 0;
+}
+function joyEnd(e){
+  joyTouchId = null; moveDir = 0;
+  joyKnob.style.transform = 'translate(-50%, -50%)';
+}
+joyZone.addEventListener('touchstart', joyStart, {passive:true});
+joyZone.addEventListener('touchmove', joyMove, {passive:true});
+joyZone.addEventListener('touchend', joyEnd, {passive:true});
+joyZone.addEventListener('mousedown', joyStart);
+window.addEventListener('mousemove', e=>{ if(joyTouchId!==null) joyMove(e); });
+window.addEventListener('mouseup', joyEnd);
+
+document.getElementById('btnJump').addEventListener('touchstart', e=>{e.preventDefault(); doJump();});
+document.getElementById('btnJump').addEventListener('click', doJump);
+document.getElementById('btnM3').addEventListener('touchstart', e=>{e.preventDefault(); doDash();});
+document.getElementById('btnM3').addEventListener('click', doDash);
+document.getElementById('btnBlock').addEventListener('touchstart', e=>{e.preventDefault(); startBlock();});
+document.getElementById('btnBlock').addEventListener('touchend', e=>{e.preventDefault(); endBlock();});
+document.getElementById('btnBlock').addEventListener('mousedown', startBlock);
+document.getElementById('btnBlock').addEventListener('mouseup', endBlock);
+document.getElementById('btnM2').addEventListener('touchstart', e=>{e.preventDefault(); doM2();});
+document.getElementById('btnM2').addEventListener('click', doM2);
+const btnSkillF = document.getElementById('btnSkillF');
+btnSkillF.addEventListener('touchstart', e=>{e.preventDefault(); startFChannel();});
+btnSkillF.addEventListener('touchend', e=>{e.preventDefault(); endFChannel();});
+btnSkillF.addEventListener('mousedown', e=>{ startFChannel(); });
+btnSkillF.addEventListener('mouseup', e=>{ endFChannel(); });
+const btnM1 = document.getElementById('btnM1');
+btnM1.addEventListener('touchstart', e=>{e.preventDefault(); S.player.m1Holding=true; S.player.m1HoldStart=performance.now();});
+btnM1.addEventListener('touchend', e=>{e.preventDefault(); if(S.player.m1Holding){S.player.m1Holding=false; performM1Release(performance.now()-S.player.m1HoldStart);}});
+btnM1.addEventListener('mousedown', e=>{ S.player.m1Holding=true; S.player.m1HoldStart=performance.now();});
+btnM1.addEventListener('mouseup', e=>{ if(S.player.m1Holding){S.player.m1Holding=false; performM1Release(performance.now()-S.player.m1HoldStart);}});
+
+// ============================================================
+// ADMIN PANEL
+// ============================================================
+function closePopup(id){ document.getElementById(id).style.display='none'; document.getElementById('popupBackdrop').style.display='none'; }
+function closeAllPopups(){ ['popupSystem','popupWeapon','popupAutoSkill','popupTime','popupScreen'].forEach(id=>document.getElementById(id).style.display='none'); document.getElementById('popupBackdrop').style.display='none'; weaponPopupOpen=false; if (typeof timeClockInterval!=='undefined' && timeClockInterval){ clearInterval(timeClockInterval); timeClockInterval=null; } if (typeof timeSubSecRAF!=='undefined' && timeSubSecRAF){ cancelAnimationFrame(timeSubSecRAF); timeSubSecRAF=null; } }
+
+// ============================================================
+// POPUP CHỌN VŨ KHÍ (W3 / H) — dùng W/S để chọn, Enter xác nhận, Esc/nút đóng để thoát
+// ============================================================
+const weaponOptions = [
+  { label:'🔫 Súng', weapon:2, swordGunMode:false },
+  { label:'⚔️🔫 Kiếm & Súng', weapon:1, swordGunMode:true }
+];
+let weaponPopupOpen = false;
+let weaponPopupIndex = 0;
+function renderWeaponOptions(){
+  const box = document.getElementById('weaponOptionList');
+  box.innerHTML = '';
+  weaponOptions.forEach((opt, i)=>{
+    const div = document.createElement('div');
+    const selected = i===weaponPopupIndex;
+    div.textContent = (selected?'➤ ':'   ') + opt.label;
+    div.style.cssText = `padding:10px; border-radius:6px; cursor:pointer; font-size:13px; font-weight:bold; border:2px solid ${selected?'#ffcc00':'#553300'}; background:${selected?'rgba(255,170,0,0.25)':'rgba(255,170,0,0.05)'}; color:${selected?'#ffdd66':'#cc9955'};`;
+    div.onclick = ()=>{ weaponPopupIndex = i; renderWeaponOptions(); confirmWeaponSelection(); };
+    box.appendChild(div);
+  });
+}
+function openWeaponPopup(){
+  weaponPopupOpen = true;
+  weaponPopupIndex = S.player.swordGunMode ? 1 : 0;
+  renderWeaponOptions();
+  document.getElementById('popupWeapon').style.display = 'block';
+  document.getElementById('popupBackdrop').style.display = 'block';
+}
+function closeWeaponPopup(){
+  weaponPopupOpen = false;
+  document.getElementById('popupWeapon').style.display = 'none';
+  document.getElementById('popupBackdrop').style.display = 'none';
+}
+function confirmWeaponSelection(){
+  const opt = weaponOptions[weaponPopupIndex];
+  S.player.weapon = opt.weapon;
+  S.player.swordGunMode = opt.swordGunMode;
+  document.getElementById('badgeWeapon').textContent = 'VŨ KHÍ: ' + (S.player.weapon===1?'KIẾM':'SÚNG');
+  document.getElementById('badgeMode').textContent = 'CHẾ ĐỘ: ' + (S.player.swordGunMode ? 'S & G' : 'THƯỜNG');
+  addLog('🔄 [W3] Đã chọn: ' + opt.label);
+  updateZXCVVisibility();
+  updateLockedSkillBtns();
+  closeWeaponPopup();
+}
+function updateLockedSkillBtns(){
+  const group = document.getElementById('rtyuGroup');
+  if (group) group.style.display = S.player.swordGunMode ? 'flex' : 'none';
+  ['R','T','Y','U'].forEach(k=>{
+    const btn = document.getElementById('btnSkill'+k);
+    const lbl = document.getElementById('lblLock'+k);
+    if (!btn) return;
+    btn.disabled = !S.player.swordGunMode;
+    if (lbl) lbl.textContent = '';
+  });
+}
+function toggleSystemPanel(){
+  const p = document.getElementById('popupSystem');
+  const show = p.style.display==='none';
+  p.style.display = show?'block':'none';
+  document.getElementById('popupBackdrop').style.display = show?'block':'none';
+}
+function toggleHackPanel(){
+  const p = document.getElementById('hackPanel');
+  p.style.display = p.style.display==='none' ? 'block' : 'none';
+}
+
+// ============================================================
+// 🤖 AUTO USE SKILL — tự động lặp lại (các) chiêu Z X C V B N M J F theo vòng,
+// có delay giữa các lần dùng và thời gian giữ chiêu (chủ yếu áp dụng cho F - chiêu giữ).
+// ============================================================
+const AUTO_SKILL_KEYS = ['Z','X','C','V','B','N','M','J','F'];
+let autoSkillState = { active:false, keys:[], delayMs:0, holdMs:0, holdInfinite:false, idx:0, timer:null, fHolding:false, fWatchdog:null };
+
+function onAutoSkillInfiniteToggle(){
+  const chk = document.getElementById('autoSkillHoldInfinite');
+  const input = document.getElementById('autoSkillHoldInput');
+  input.disabled = chk.checked;
+  input.style.opacity = chk.checked ? '0.4' : '1';
+}
+function buildAutoSkillCheckboxes(){
+  const box = document.getElementById('autoSkillCheckboxes');
+  if (box.children.length) return; // chỉ build 1 lần
+  AUTO_SKILL_KEYS.forEach(k=>{
+    const lbl = document.createElement('label');
+    lbl.style.cssText = 'display:flex; align-items:center; gap:4px; color:#ccffdd; font-size:12px; font-weight:bold; background:rgba(255,255,255,0.05); padding:5px 6px; border-radius:5px; cursor:pointer;';
+    lbl.innerHTML = `<input type="checkbox" id="autoSkillChk_${k}" style="accent-color:#33ff77;"> ${k}`;
+    box.appendChild(lbl);
+  });
+}
+function openAutoSkillPopup(){
+  buildAutoSkillCheckboxes();
+  document.getElementById('popupAutoSkill').style.display = 'block';
+  document.getElementById('popupBackdrop').style.display = 'block';
+}
+function closeAutoSkillPopup(){
+  document.getElementById('popupAutoSkill').style.display = 'none';
+  document.getElementById('popupBackdrop').style.display = 'none';
+}
+function updateAutoSkillStatusLabel(){
+  const el = document.getElementById('autoSkillStatusLabel');
+  if (!el) return;
+  el.textContent = autoSkillState.active
+    ? ('BẬT — đang lặp: ' + autoSkillState.keys.join(', '))
+    : 'TẮT — bấm để mở cấu hình';
+}
+function startAutoSkill(){
+  const keys = AUTO_SKILL_KEYS.filter(k=>{
+    const chk = document.getElementById('autoSkillChk_'+k);
+    return chk && chk.checked;
+  });
+  if (keys.length===0){ showSystemAlert('🤖 Chọn ít nhất 1 chiêu để auto dùng!'); return; }
+  let delaySec = parseFloat(document.getElementById('autoSkillDelayInput').value);
+  if (isNaN(delaySec)) delaySec = 0;
+  delaySec = Math.max(0, Math.min(1.5, delaySec)); // giới hạn tối đa 1.5s theo yêu cầu
+  const holdInfinite = document.getElementById('autoSkillHoldInfinite').checked;
+  let holdSec = parseFloat(document.getElementById('autoSkillHoldInput').value);
+  if (isNaN(holdSec) || holdSec < 0) holdSec = 0; // không giới hạn trên
+
+  if (autoSkillState.timer) clearTimeout(autoSkillState.timer);
+  if (autoSkillState.fWatchdog) clearInterval(autoSkillState.fWatchdog);
+  if (autoSkillState.fHolding){ endFChannel(); autoSkillState.fHolding = false; }
+
+  autoSkillState.active = true;
+  autoSkillState.keys = keys;
+  autoSkillState.delayMs = delaySec*1000;
+  autoSkillState.holdMs = holdSec*1000;
+  autoSkillState.holdInfinite = holdInfinite;
+  autoSkillState.idx = 0;
+  addLog('🤖 [AUTO SKILL] Bắt đầu — chiêu: ' + keys.join(', ') + ` | delay ${delaySec}s | giữ ${holdInfinite ? 'VÔ HẠN' : holdSec+'s'}`);
+  updateAutoSkillStatusLabel();
+  runAutoSkillStep();
+}
+function stopAutoSkill(){
+  autoSkillState.active = false;
+  if (autoSkillState.timer) clearTimeout(autoSkillState.timer);
+  autoSkillState.timer = null;
+  if (autoSkillState.fWatchdog) clearInterval(autoSkillState.fWatchdog);
+  autoSkillState.fWatchdog = null;
+  if (autoSkillState.fHolding){ endFChannel(); autoSkillState.fHolding = false; }
+  addLog('🤖 [AUTO SKILL] Đã dừng.');
+  updateAutoSkillStatusLabel();
+}
+function runAutoSkillStep(){
+  if (!autoSkillState.active) return;
+  const key = autoSkillState.keys[autoSkillState.idx % autoSkillState.keys.length];
+  autoSkillState.idx++;
+  if (key === 'F'){
+    startFChannel();
+    autoSkillState.fHolding = true;
+    if (autoSkillState.holdInfinite){
+      // GIỮ VÔ HẠN: F có failsafe tự ngắt sau 20s (giới hạn kỹ thuật của chiêu) — canh gác (watchdog)
+      // để tự bật lại NGAY nếu điều đó xảy ra, giữ liên tục cho tới khi người dùng tự bấm DỪNG.
+      autoSkillState.fWatchdog = setInterval(()=>{
+        if (!autoSkillState.active){ clearInterval(autoSkillState.fWatchdog); autoSkillState.fWatchdog=null; return; }
+        if (!S.player.fCharging){ startFChannel(); }
+      }, 300);
+      // không schedule bước tiếp theo — chỉ dừng khi bấm nút DỪNG
+    } else {
+      const holdMs = Math.max(100, autoSkillState.holdMs); // tối thiểu 100ms để chiêu kịp có hiệu lực
+      autoSkillState.timer = setTimeout(()=>{
+        endFChannel();
+        autoSkillState.fHolding = false;
+        autoSkillState.timer = setTimeout(runAutoSkillStep, autoSkillState.delayMs);
+      }, holdMs);
+    }
+  } else {
+    // Các chiêu tap khác: B/N/M/J tự bỏ qua nếu chưa đủ điều kiện Kiếm & Súng (castSkill tự xử lý)
+    castSkill(key);
+    const holdMs = autoSkillState.holdInfinite ? 0 : autoSkillState.holdMs; // "giữ" không áp dụng thật cho chiêu tap
+    autoSkillState.timer = setTimeout(()=>{
+      autoSkillState.timer = setTimeout(runAutoSkillStep, autoSkillState.delayMs);
+    }, holdMs);
+  }
+}
+function hackToggle(key){
+  HACKS[key] = !HACKS[key];
+  const btn = document.getElementById('hkBtn_'+key);
+  if (btn) btn.querySelector('span').textContent = HACKS[key] ? 'BẬT' : 'TẮT';
+  addLog('☠️ [ADMIN] ' + key + ' = ' + (HACKS[key]?'BẬT':'TẮT'));
+  if (key==='infrage' && HACKS[key]){ S.player.rage1=100; S.player.rage2=100; updateRageUI(); }
+  if (key==='infhp' && HACKS[key]){ S.player.hp=S.player.maxHp; updatePlayerHpUI(); }
+}
+function hackAction(action){
+  if (action==='maxdmg'){
+    hackDmgStack *= 1000;
+    document.getElementById('dmgStackLabel').textContent = 'Hiện tại: x'+hackDmgStack.toLocaleString('en-US');
+    addLog('☠️ [ADMIN] DMG STACK x'+hackDmgStack.toLocaleString('en-US'));
+  } else if (action==='resetdmgstack'){
+    hackDmgStack = 1;
+    document.getElementById('dmgStackLabel').textContent = 'Hiện tại: x1';
+    addLog('🚫 [ADMIN] Reset DMG stack về x1.');
+  } else if (action==='maxkills'){
+    S.player.kills += 999; document.getElementById('killText').textContent = S.player.kills;
+    addLog('🏆 [ADMIN] +999 KILLS!');
+  } else if (action==='fillbars'){
+    S.player.rage1 = 100; S.player.rage2 = 100; updateRageUI();
+    addLog('⚛️ [ADMIN] Đã đổ ĐẦY Rage (Chiến Ý) và Atomic (Năng Lượng Hạt Nhân)!');
+  } else if (action==='resetall'){
+    Object.keys(HACKS).forEach(k=>HACKS[k]=false);
+    hackDmgMultiplier=1; hackDmgStack=1; hackSpeedMultiplier=1;
+    S.player.selfDestructThreshold=2000; S.player.selfDestructAccum=0;
+    document.getElementById('hackDmgSlider').value=1; document.getElementById('hackDmgMult').textContent='1';
+    document.getElementById('hackSpeedSlider').value=1; document.getElementById('hackSpeedMult').textContent='1';
+    document.getElementById('dmgStackLabel').textContent='Hiện tại: x1';
+    ['godmode','infrage','autokill','freeze','infhp'].forEach(k=>{
+      const b=document.getElementById('hkBtn_'+k); if(b) b.querySelector('span').textContent='TẮT';
+    });
+    addLog('🔄 [ADMIN] Đã reset toàn bộ Admin!');
+  }
+}
+function hackSetDmgMult(v){ hackDmgMultiplier=parseInt(v); document.getElementById('hackDmgMult').textContent=v; }
+function hackSetSpeedMult(v){ hackSpeedMultiplier=parseInt(v); document.getElementById('hackSpeedMult').textContent=v; }
+function adminLog(msg){
+  const el = document.getElementById('adminCmdOutput');
+  el.textContent += msg + '\\n';
+  el.scrollTop = el.scrollHeight;
+}
+// ============================================================
+// LICH AM (LUNAR CALENDAR) — thuat toan thien van chuan (Jean Meeus),
+// mui gio Viet Nam UTC+7. Dung de chuyen ngay duong sang ngay am.
+// ============================================================
+function jdFromDate(dd, mm, yy){
+  const a = Math.floor((14 - mm) / 12);
+  const y = yy + 4800 - a;
+  const m = mm + 12*a - 3;
+  let jd = dd + Math.floor((153*m + 2)/5) + 365*y + Math.floor(y/4) - Math.floor(y/100) + Math.floor(y/400) - 32045;
+  if (jd < 2299161) jd = dd + Math.floor((153*m + 2)/5) + 365*y + Math.floor(y/4) - 32083;
+  return jd;
+}
+function lunarNewMoon(k){
+  const T = k / 1236.85, T2 = T*T, T3 = T2*T, dr = Math.PI/180;
+  let Jd1 = 2415020.75933 + 29.53058868*k + 0.0001178*T2 - 0.000000155*T3;
+  Jd1 += 0.00033 * Math.sin((166.56 + 132.87*T - 0.009173*T2) * dr);
+  const M = 359.2242 + 29.10535608*k - 0.0000333*T2 - 0.00000347*T3;
+  const Mpr = 306.0253 + 385.81691806*k + 0.0107306*T2 + 0.00001236*T3;
+  const F = 21.2964 + 390.67050646*k - 0.0016528*T2 - 0.00000239*T3;
+  let C1 = (0.1734 - 0.000393*T)*Math.sin(M*dr) + 0.0021*Math.sin(2*dr*M);
+  C1 = C1 - 0.4068*Math.sin(Mpr*dr) + 0.0161*Math.sin(dr*2*Mpr);
+  C1 = C1 - 0.0004*Math.sin(dr*3*Mpr);
+  C1 = C1 + 0.0104*Math.sin(dr*2*F) - 0.0051*Math.sin(dr*(M+Mpr));
+  C1 = C1 - 0.0074*Math.sin(dr*(M-Mpr)) + 0.0004*Math.sin(dr*(2*F+M));
+  C1 = C1 - 0.0004*Math.sin(dr*(2*F-M)) - 0.0006*Math.sin(dr*(2*F+Mpr));
+  C1 = C1 + 0.0010*Math.sin(dr*(2*F-Mpr)) + 0.0005*Math.sin(dr*(2*Mpr+M));
+  let deltat;
+  if (T < -11) deltat = 0.001 + 0.000839*T + 0.0002261*T2 - 0.00000845*T3 - 0.000000081*T*T3;
+  else deltat = -0.000278 + 0.000265*T + 0.000262*T2;
+  return Jd1 + C1 - deltat;
+}
+function lunarSunLongitude(jdn){
+  const T = (jdn - 2451545.0) / 36525, T2 = T*T, dr = Math.PI/180;
+  const M = 357.52910 + 35999.05030*T - 0.0001559*T2 - 0.00000048*T*T2;
+  const L0 = 280.46645 + 36000.76983*T + 0.0003032*T2;
+  let DL = (1.914600 - 0.004817*T - 0.000014*T2) * Math.sin(dr*M);
+  DL = DL + (0.019993 - 0.000101*T)*Math.sin(dr*2*M) + 0.000290*Math.sin(dr*3*M);
+  let L = (L0 + DL) * dr;
+  L = L - Math.PI*2 * Math.floor(L / (Math.PI*2));
+  return L;
+}
+function lunarGetSunLongitude(dayNumber, tz){ return Math.floor(lunarSunLongitude(dayNumber - 0.5 - tz/24) / Math.PI * 6); }
+function lunarGetNewMoonDay(k, tz){ return Math.floor(lunarNewMoon(k) + 0.5 + tz/24); }
+function lunarGetMonth11(yy, tz){
+  const off = jdFromDate(31, 12, yy) - 2415021;
+  const k = Math.floor(off / 29.530588853);
+  let nm = lunarGetNewMoonDay(k, tz);
+  const sunLong = lunarGetSunLongitude(nm, tz);
+  if (sunLong >= 9) nm = lunarGetNewMoonDay(k - 1, tz);
+  return nm;
+}
+function lunarGetLeapMonthOffset(a11, tz){
+  const k = Math.floor((a11 - 2415021.076998695) / 29.530588853 + 0.5);
+  let last = 0, i = 1;
+  let arc = lunarGetSunLongitude(lunarGetNewMoonDay(k + i, tz), tz);
+  do {
+    last = arc; i++;
+    arc = lunarGetSunLongitude(lunarGetNewMoonDay(k + i, tz), tz);
+  } while (arc !== last && i < 14);
+  return i - 1;
+}
+function convertSolar2Lunar(dd, mm, yy, tz){
+  const dayNumber = jdFromDate(dd, mm, yy);
+  const k = Math.floor((dayNumber - 2415021.076998695) / 29.530588853);
+  let monthStart = lunarGetNewMoonDay(k + 1, tz);
+  if (monthStart > dayNumber) monthStart = lunarGetNewMoonDay(k, tz);
+  let a11 = lunarGetMonth11(yy, tz);
+  let b11 = a11, lunarYear;
+  if (a11 >= monthStart){ lunarYear = yy; a11 = lunarGetMonth11(yy - 1, tz); }
+  else { lunarYear = yy + 1; b11 = lunarGetMonth11(yy + 1, tz); }
+  const lunarDay = dayNumber - monthStart + 1;
+  const diff = Math.floor((monthStart - a11) / 29);
+  let lunarLeap = 0, lunarMonth = diff + 11;
+  if (b11 - a11 > 365){
+    const leapMonthDiff = lunarGetLeapMonthOffset(a11, tz);
+    if (diff >= leapMonthDiff){ lunarMonth = diff + 10; if (diff === leapMonthDiff) lunarLeap = 1; }
+  }
+  if (lunarMonth > 12) lunarMonth -= 12;
+  if (lunarMonth >= 11 && diff < 4) lunarYear -= 1;
+  return [lunarDay, lunarMonth, lunarYear, lunarLeap];
+}
+
+// ============================================================
+// POPUP THOI GIAN — gio/phut/giay + ngay/thang/nam duong lich + am lich
+// ============================================================
+// ============================================================
+// TUẦN TRĂNG & THỦY TRIỀU — ước tính theo ngày Âm lịch (quy luật con nước dân gian VN:
+// triều cường quanh mùng 1 & rằm 15-16, triều kém quanh mùng 7-8 & 22-23)
+// ============================================================
+function lunarPhaseInfo(day){
+  if (day === 1) return { icon:'🌑', name:'Trăng Non (Sóc)' };
+  if (day >= 2 && day <= 6) return { icon:'🌒', name:'Trăng Lưỡi Liềm Đầu Tháng' };
+  if (day === 7 || day === 8) return { icon:'🌓', name:'Trăng Bán Nguyệt Đầu Tháng (Thượng Huyền)' };
+  if (day >= 9 && day <= 14) return { icon:'🌔', name:'Trăng Khuyết Đầu Tháng (sắp tròn)' };
+  if (day === 15 || day === 16) return { icon:'🌕', name:'Trăng Tròn (Rằm / Vọng)' };
+  if (day >= 17 && day <= 21) return { icon:'🌖', name:'Trăng Khuyết Cuối Tháng' };
+  if (day === 22 || day === 23) return { icon:'🌗', name:'Trăng Bán Nguyệt Cuối Tháng (Hạ Huyền)' };
+  return { icon:'🌘', name:'Trăng Lưỡi Liềm Cuối Tháng' }; // 24-30
+}
+function tideInfo(day){
+  if (day === 1 || day === 15 || day === 16) return { icon:'🌊⬆️', name:'Triều Cường (Nước Lớn)', desc:'Biên độ triều lên/xuống cao nhất tháng — trùng Trăng Non/Trăng Tròn' };
+  if (day === 7 || day === 8 || day === 22 || day === 23) return { icon:'💧⬇️', name:'Triều Kém (Nước Kém)', desc:'Biên độ triều lên/xuống thấp nhất tháng — trùng Trăng Bán Nguyệt' };
+  if ((day >= 2 && day <= 6) || (day >= 17 && day <= 21)) return { icon:'📉', name:'Triều Đang Giảm', desc:'Đang chuyển dần từ Triều Cường về Triều Kém' };
+  return { icon:'📈', name:'Triều Đang Tăng', desc:'Đang chuyển dần từ Triều Kém lên Triều Cường' }; // 9-14, 24-30
+}
+
+let timeClockInterval = null;
+let timeTickFlag = false;
+let timeSubSecRAF = null;
+function updateTimeSubSecDisplay(){
+  // ms là mili giây THẬT lấy từ đồng hồ hệ thống (Date.now()).
+  // µs (micro giây) và ns (nano giây) chỉ là phần lẻ nội suy từ performance.now() độ phân giải cao —
+  // trình duyệt luôn giới hạn độ chính xác thật ở khoảng 1ms (vì lý do bảo mật), nên µs/ns ở đây
+  // mang tính MINH HỌA cho việc "càng lúc càng nhỏ" chứ không phải giá trị đo được tuyệt đối chính xác.
+  const el = document.getElementById('timeSubSecDisplay');
+  if (!el) return;
+  const dateMs = Date.now();
+  const ms = String(dateMs % 1000).padStart(3,'0');
+  const hiRes = performance.now();
+  const frac = hiRes - Math.floor(hiRes); // phần lẻ dưới 1ms hiện có từ performance.now()
+  const us = String(Math.floor(frac * 1000)).padStart(3,'0');
+  const ns = String(Math.floor(frac * 1000000) % 1000).padStart(3,'0');
+  el.textContent = `ms ${ms} · µs ${us} · ns ${ns}`;
+  timeSubSecRAF = requestAnimationFrame(updateTimeSubSecDisplay);
+}
+function updateTimeClockDisplay(){
+  const now = new Date();
+  const hh = String(now.getHours()).padStart(2,'0');
+  const mi = String(now.getMinutes()).padStart(2,'0');
+  const ss = String(now.getSeconds()).padStart(2,'0');
+  const clockEl = document.getElementById('timeClockDisplay');
+  if (clockEl) clockEl.textContent = `${hh}:${mi}:${ss}`;
+  // TICK: hiệu ứng chớp nháy đúng mỗi giây thực để xác nhận đồng hồ đang chạy sống (real-time tick)
+  const tickDot = document.getElementById('timeTickDot');
+  if (tickDot){
+    timeTickFlag = !timeTickFlag;
+    tickDot.style.background = timeTickFlag ? '#ffee66' : '#ffcc00';
+    tickDot.classList.remove('tick-pulse');
+    void tickDot.offsetWidth; // ép reflow để animation chạy lại từ đầu mỗi tick
+    tickDot.classList.add('tick-pulse');
+  }
+  const dd = now.getDate(), mm = now.getMonth()+1, yy = now.getFullYear();
+  const weekdays = ['Chủ Nhật','Thứ Hai','Thứ Ba','Thứ Tư','Thứ Năm','Thứ Sáu','Thứ Bảy'];
+  const dateEl = document.getElementById('timeDateDisplay');
+  if (dateEl) dateEl.textContent = `${weekdays[now.getDay()]} — Ngày ${dd} / Tháng ${mm} / Năm ${yy}`;
+  const lunarEl = document.getElementById('timeLunarDisplay');
+  const moonEl = document.getElementById('timeMoonPhaseDisplay');
+  const tideEl = document.getElementById('timeTideDisplay');
+  if (lunarEl){
+    try {
+      const lunar = convertSolar2Lunar(dd, mm, yy, 7);
+      lunarEl.textContent = `🌙 Âm lịch: ${lunar[3] ? '(Nhuận) ' : ''}Ngày ${lunar[0]} / Tháng ${lunar[1]} / Năm ${lunar[2]}`;
+      if (moonEl){
+        const mp = lunarPhaseInfo(lunar[0]);
+        moonEl.textContent = `${mp.icon} Tuần trăng: ${mp.name} (ngày ${lunar[0]} ÂL)`;
+      }
+      if (tideEl){
+        const td = tideInfo(lunar[0]);
+        tideEl.textContent = `${td.icon} Thủy triều: ${td.name} — ${td.desc}`;
+      }
+    } catch(e){
+      lunarEl.textContent = '🌙 Âm lịch: (không tính được)';
+      if (moonEl) moonEl.textContent = '🌙 Tuần trăng: (không tính được)';
+      if (tideEl) tideEl.textContent = '🌊 Thủy triều: (không tính được)';
+    }
+  }
+}
+function showTimePopup(){
+  updateTimeClockDisplay();
+  document.getElementById('popupTime').style.display = 'block';
+  document.getElementById('popupBackdrop').style.display = 'block';
+  if (timeClockInterval) clearInterval(timeClockInterval);
+  timeClockInterval = setInterval(updateTimeClockDisplay, 1000);
+  if (timeSubSecRAF) cancelAnimationFrame(timeSubSecRAF);
+  updateTimeSubSecDisplay(); // vòng lặp riêng chạy theo khung hình (nhanh hơn 1 giây nhiều) để ms/µs/ns nhảy liên tục
+}
+function closeTimePopup(){
+  document.getElementById('popupTime').style.display = 'none';
+  document.getElementById('popupBackdrop').style.display = 'none';
+  if (timeClockInterval){ clearInterval(timeClockInterval); timeClockInterval = null; }
+  if (timeSubSecRAF){ cancelAnimationFrame(timeSubSecRAF); timeSubSecRAF = null; }
+}
+
+// ===== MÀN HÌNH: Toàn màn hình + Chế độ Desktop =====
+function openScreenPopup(){
+  document.getElementById('popupScreen').style.display = 'block';
+  document.getElementById('popupBackdrop').style.display = 'block';
+  updateFullscreenLabel();
+}
+function closeScreenPopup(){
+  document.getElementById('popupScreen').style.display = 'none';
+  document.getElementById('popupBackdrop').style.display = 'none';
+}
+function updateFullscreenLabel(){
+  const isFs = !!(document.fullscreenElement || document.webkitFullscreenElement || document.msFullscreenElement);
+  const lbl = document.getElementById('fullscreenStatusLabel');
+  if (lbl) lbl.textContent = isFs ? 'BẬT' : 'TẮT';
+}
+document.addEventListener('fullscreenchange', updateFullscreenLabel);
+document.addEventListener('webkitfullscreenchange', updateFullscreenLabel);
+document.addEventListener('msfullscreenchange', updateFullscreenLabel);
+function toggleFullscreenMode(){
+  const isFs = !!(document.fullscreenElement || document.webkitFullscreenElement || document.msFullscreenElement);
+  if (!isFs){
+    const el = document.documentElement;
+    const req = el.requestFullscreen || el.webkitRequestFullscreen || el.mozRequestFullScreen || el.msRequestFullscreen;
+    if (req) req.call(el).catch ? req.call(el).catch(()=>{}) : req.call(el);
+  } else {
+    const exit = document.exitFullscreen || document.webkitExitFullscreen || document.mozCancelFullScreen || document.msExitFullscreen;
+    if (exit) exit.call(document);
+  }
+  setTimeout(updateFullscreenLabel, 300);
+}
+let desktopModeOn = false;
+function toggleDesktopMode(){
+  const meta = document.querySelector('meta[name="viewport"]');
+  desktopModeOn = !desktopModeOn;
+  if (meta){
+    if (desktopModeOn){
+      // Tính scale vừa khít chiều rộng màn hình thật, thay vì luôn cố định 0.3 (gây thu quá nhỏ trên màn hình rộng)
+      const dScale = Math.max(0.35, Math.min(1, window.innerWidth / 1280));
+      meta.setAttribute('content', 'width=1280, initial-scale=' + dScale.toFixed(3) + ', maximum-scale=5, user-scalable=yes');
+    } else {
+      meta.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover');
+    }
+  }
+  document.body.classList.toggle('desktop-mode', desktopModeOn);
+  applyDesktopHudSizes(desktopModeOn);
+  const lbl = document.getElementById('desktopModeStatusLabel');
+  if (lbl) lbl.textContent = desktopModeOn ? 'BẬT — đang giả lập Desktop' : 'TẮT';
+  setTimeout(()=>{ if (typeof resize==='function') resize(); layoutSideButtons(); }, 250);
+}
+
+// ---- Chế độ Desktop: phóng to chữ/khung 3 HUD trên (HP/Chiến Ý/Năng Lượng, BOSS/Quái, cột Admin)
+// Dùng cache lưu GIÁ TRỊ GỐC (không phải chuỗi rỗng) của từng phần tử để khi TẮT khôi phục chính xác,
+// tránh lỗi méo viền/co giãn vô lý do trước đây gán style='' làm MẤT HẲN thuộc tính gốc thay vì khôi phục.
+let _hudDesktopCache = null;
+function applyDesktopHudSizes(on){
+  const hpPanel = document.getElementById('hudHpPanel');
+  const bossPanel = document.getElementById('hudBossPanel');
+  const badges = document.getElementById('hudBadges');
+  if (!hpPanel || !bossPanel || !badges) return;
+  const normalEls = [
+    ...hpPanel.querySelectorAll('div,button,span'),
+    ...bossPanel.querySelectorAll('div,button,span')
+  ];
+  // 2 nút cần phóng to hơn các nút còn lại trong cột Admin: ADMIN & THỜI GIAN
+  const strongEls = [document.getElementById('hackPanelToggleBtn'), document.getElementById('timePanelToggleBtn')].filter(Boolean);
+  const normalBadgeEls = Array.from(badges.querySelectorAll('div')).filter(el => !strongEls.includes(el));
+  const panels = [
+    { el: hpPanel,   props: ['minWidth','padding'] },
+    { el: bossPanel, props: ['width','padding'] }
+  ];
+
+  if (!_hudDesktopCache){
+    _hudDesktopCache = new Map();
+    [...normalEls, ...strongEls, ...normalBadgeEls].forEach(el => {
+      _hudDesktopCache.set(el, { fontSize: el.style.fontSize || getComputedStyle(el).fontSize, padding: el.style.padding });
+    });
+    panels.forEach(p => {
+      const orig = {};
+      p.props.forEach(prop => { orig[prop] = p.el.style[prop]; }); // lưu đúng giá trị gốc trong style attribute (vd '170px', '8px')
+      _hudDesktopCache.set(p.el, orig);
+    });
+  }
+  function scaleFont(el, mult, extraPx){
+    const orig = _hudDesktopCache.get(el);
+    if (!orig) return;
+    const m = orig.fontSize.match(/([\d.]+)px/);
+    if (!m) return;
+    el.style.fontSize = on ? (parseFloat(m[1]) * mult + (extraPx||0)).toFixed(1) + 'px' : orig.fontSize;
+  }
+  // +4px theo yêu cầu tăng thêm cho cả 3 khung HUD (kể cả ADMIN/THỜI GIAN)
+  normalEls.forEach(el => scaleFont(el, 1.15, 4));
+  normalBadgeEls.forEach(el => scaleFont(el, 1.15, 4));
+  strongEls.forEach(el => scaleFont(el, 1.35, 4)); // ADMIN & THỜI GIAN to hơn phần còn lại, nhưng bớt mạnh hơn trước
+
+  // Khung to hơn tương ứng để chứa chữ to hơn (đã nới thêm cho khớp +4px chữ) — khi TẮT khôi phục ĐÚNG giá trị gốc (không xoá thuộc tính)
+  const hpOrig = _hudDesktopCache.get(hpPanel);
+  hpPanel.style.minWidth = on ? '225px' : hpOrig.minWidth;
+  hpPanel.style.padding = on ? '11px' : hpOrig.padding;
+  const bossOrig = _hudDesktopCache.get(bossPanel);
+  bossPanel.style.width = on ? '280px' : bossOrig.width;
+  bossPanel.style.padding = on ? '9px' : bossOrig.padding;
+  badges.querySelectorAll('div').forEach(el => {
+    const orig = _hudDesktopCache.get(el);
+    el.style.padding = on ? '5px 11px' : (orig ? orig.padding : '');
+  });
+}
+
+function runAdminCommand(){
+  const inp = document.getElementById('adminCmdInput');
+  const cmd = inp.value.trim(); inp.value='';
+  if (!cmd) return;
+  adminLog('> '+cmd);
+  const parts = cmd.replace('/','').split(' ');
+  const c = parts[0].toLowerCase();
+  if (c==='help'){ adminLog('Lệnh: godmode on/off, infrage on/off, infhp on/off, autokill on/off, freeze on/off, screen, kills <n>, dmgmult <n>, fillbars, autoskill on <keys> [delay] [hold|inf] / autoskill off, time'); }
+  else if (['godmode','infrage','infhp','autokill','freeze'].includes(c)){
+    HACKS[c] = parts[1]==='on';
+    const btn=document.getElementById('hkBtn_'+c); if(btn) btn.querySelector('span').textContent = HACKS[c]?'BẬT':'TẮT';
+    adminLog(c+' = '+HACKS[c]);
+  } else if (c==='screen'){ openScreenPopup(); adminLog('🖥️ Đã mở bảng Màn Hình.'); }
+  else if (c==='kills'){ S.player.kills += parseInt(parts[1])||0; document.getElementById('killText').textContent=S.player.kills; adminLog('Kills = '+S.player.kills); }
+  else if (c==='dmgmult'){ hackDmgMultiplier = parseInt(parts[1])||1; document.getElementById('hackDmgSlider').value=hackDmgMultiplier; document.getElementById('hackDmgMult').textContent=hackDmgMultiplier; adminLog('DMG mult = '+hackDmgMultiplier); }
+  else if (c==='fillbars'){ hackAction('fillbars'); adminLog('Đã đổ đầy Rage + Atomic.'); }
+  else if (c==='autoskill'){
+    const sub = (parts[1]||'').toLowerCase();
+    if (sub==='off'){
+      stopAutoSkill();
+      adminLog('AutoSkill = OFF');
+    } else if (sub==='on'){
+      const rawKeys = (parts[2]||'').toUpperCase().replace(/[^A-Z]/g,'');
+      const keys = AUTO_SKILL_KEYS.filter(k=>rawKeys.includes(k));
+      if (keys.length===0){ adminLog('⚠️ Cần chọn ít nhất 1 chiêu hợp lệ: '+AUTO_SKILL_KEYS.join(',')+'. VD: /autoskill on ZXV 0.3 inf'); return; }
+      let delaySec = parseFloat(parts[3]); if (isNaN(delaySec)) delaySec = 0;
+      delaySec = Math.max(0, Math.min(1.5, delaySec));
+      const holdArg = (parts[4]||'0');
+      const holdInfinite = holdArg.toLowerCase()==='inf';
+      const holdSec = holdInfinite ? 0 : (parseFloat(holdArg)||0);
+      if (autoSkillState.timer) clearTimeout(autoSkillState.timer);
+      if (autoSkillState.fWatchdog) clearInterval(autoSkillState.fWatchdog);
+      if (autoSkillState.fHolding){ endFChannel(); autoSkillState.fHolding = false; }
+      autoSkillState.active = true;
+      autoSkillState.keys = keys;
+      autoSkillState.delayMs = delaySec*1000;
+      autoSkillState.holdMs = holdSec*1000;
+      autoSkillState.holdInfinite = holdInfinite;
+      autoSkillState.idx = 0;
+      buildAutoSkillCheckboxes();
+      AUTO_SKILL_KEYS.forEach(k=>{ const chk=document.getElementById('autoSkillChk_'+k); if (chk) chk.checked = keys.includes(k); });
+      updateAutoSkillStatusLabel();
+      runAutoSkillStep();
+      addLog('🤖 [AUTO SKILL] Bắt đầu (qua lệnh) — chiêu: ' + keys.join(', ') + ` | delay ${delaySec}s | giữ ${holdInfinite ? 'VÔ HẠN' : holdSec+'s'}`);
+      adminLog('AutoSkill = ON — chiêu: '+keys.join(',')+' | delay '+delaySec+'s | giữ '+(holdInfinite?'VÔ HẠN':holdSec+'s'));
+    } else {
+      adminLog('Cú pháp: /autoskill on <keys> [delay] [hold|inf]  hoặc /autoskill off. Keys hợp lệ: '+AUTO_SKILL_KEYS.join(','));
+    }
+  }
+  else if (c==='time'){ showTimePopup(); adminLog('🕐 Đã mở bảng Thời Gian Hệ Thống.'); }
+  else adminLog('Lệnh không hợp lệ. Gõ /help.');
+}
+
+// ============================================================
+// SAVE / LOAD
+// ============================================================
+const SAVE_KEY = 'godHunterV4_save';
+function manualSaveProgress(){
+  const data = { kills:S.player.kills, hp:S.player.hp, maxHp:S.player.maxHp, rage1:S.player.rage1, rage2:S.player.rage2, weapon:S.player.weapon };
+  try { localStorage.setItem(SAVE_KEY, JSON.stringify(data)); addLog('💾 Đã lưu tiến trình!'); } catch(e){ addLog('⚠️ Lưu thất bại: '+e.message); }
+}
+function deleteSaveProgress(){
+  try { localStorage.removeItem(SAVE_KEY); addLog('🗑️ Đã xóa save.'); } catch(e){}
+}
+function loadSaveProgress(){
+  try {
+    const raw = localStorage.getItem(SAVE_KEY);
+    if (!raw) return;
+    const data = JSON.parse(raw);
+    S.player.kills = data.kills||0;
+    S.player.maxHp = data.maxHp||10000;
+    S.player.hp = data.hp||S.player.maxHp;
+    S.player.rage1 = data.rage1||0;
+    S.player.rage2 = data.rage2||0;
+    S.player.weapon = data.weapon||1;
+    document.getElementById('killText').textContent = S.player.kills;
+    document.getElementById('badgeWeapon').textContent = 'VŨ KHÍ: ' + (S.player.weapon===1?'KIẾM':'SÚNG');
+    updatePlayerHpUI(); updateRageUI();
+    addLog('💾 Đã tải tiến trình đã lưu!');
+  } catch(e){}
+}
+let hangMachineOn = false;
+function toggleHangMachine(){
+  hangMachineOn = !hangMachineOn;
+  document.getElementById('hangMachineOverlay').style.display = hangMachineOn ? 'flex' : 'none';
+  document.getElementById('sysBtn_hangMachine').querySelector('span').textContent = hangMachineOn?'BẬT':'TẮT';
+  if (hangMachineOn) closeAllPopups();
+}
+
+// ============================================================
+// TAB HELP
+// ============================================================
+function toggleTabHelp(){
+  const el = document.getElementById('tabHelp');
+  el.style.display = el.style.display==='none' ? 'block' : 'none';
+}
+document.getElementById('tabHelp').addEventListener('click', ()=>{ document.getElementById('tabHelp').style.display='none'; });
+
+// ============================================================
+// F-CHANNEL passive energy gain from combat, DRAW & LOOP
+// ============================================================
+// Bảng màu glow phóng xạ theo TỪNG thẻ (tag) — Nuclear Form dùng xanh lá SÁNG, còn phóng xạ
+// choáng khi trúng đòn/phản dame dùng xanh lá ĐẬM hơn để phân biệt 2 hiệu ứng với nhau.
+const RADIATION_GLOW_RGB = {
+  nuclearRadiation: '51,255,136',
+  atomicHeavy:      '51,255,136',
+  hitStunRadiation: '20,108,52'
+};
+function drawRadiationGlow(e){
+  if (!e.dots) return;
+  const now = performance.now();
+  let rgb = null;
+  for (const tag in RADIATION_GLOW_RGB){
+    const d = e.dots[tag];
+    if (d && d.until > now){ rgb = RADIATION_GLOW_RGB[tag]; break; }
+  }
+  if (!rgb) return;
+  // Dùng seed riêng ổn định cho từng quái/boss (thay vì e.x) để pulse không bị giật/nhảy khi mục tiêu di chuyển
+  // — đây là nguyên nhân chính gây hiệu ứng "sọc nhẹ" khi nhiều mục tiêu dính phóng xạ cùng lúc.
+  if (e._rGlowSeed === undefined) e._rGlowSeed = Math.random()*1000;
+  const pulse = 1 + Math.sin(now/220 + e._rGlowSeed)*0.12;
+  const cx = e.x, cy = e.y - e.size*0.8, r = e.size*0.95*pulse;
+  ctx.save();
+  // Glow bằng radial gradient thay vì stroke+shadowBlur lặp lại mỗi frame trên nhiều thực thể
+  // (shadowBlur chồng nhiều lớp mỗi frame chính là nguyên nhân gây rạn/sọc trên canvas).
+  const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, r);
+  grad.addColorStop(0, 'rgba('+rgb+',0.55)');
+  grad.addColorStop(0.7, 'rgba('+rgb+',0.16)');
+  grad.addColorStop(1, 'rgba('+rgb+',0)');
+  ctx.fillStyle = grad;
+  ctx.beginPath();
+  ctx.arc(cx, cy, r, 0, Math.PI*2);
+  ctx.fill();
+  ctx.strokeStyle = 'rgba('+rgb+',0.55)';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.arc(cx, cy, r, 0, Math.PI*2);
+  ctx.stroke();
+  ctx.font='13px monospace'; ctx.textAlign='center';
+  ctx.fillText('☢️', e.x, e.y - e.size*1.9);
+  ctx.restore();
+}
+function drawStunFx(e){
+  const now = performance.now();
+  if (!(e.stunnedUntil && e.stunnedUntil > now)) return;
+  // Dùng màu/form đã LƯU LẠI tại thời điểm bị choáng (e.stunFormColor/e.stunFormMode), KHÔNG
+  // đọc form hiện tại của người chơi — để màu choáng không bị đổi ngay khi người chơi thoát form.
+  const color = e.stunFormColor || '#ffee66';
+  const icon = e.stunFormMode==='robot' ? '⚙️' : (e.stunFormMode==='nuclear' ? '☢️' : '💫');
+  if (e._stunSeed === undefined) e._stunSeed = Math.random()*1000;
+  const spin = now/220 + e._stunSeed;
+  ctx.save();
+  ctx.globalAlpha = 0.9;
+  ctx.font = '12px monospace'; ctx.textAlign='center';
+  ctx.fillStyle = color;
+  for (let i=0;i<3;i++){
+    const ang = spin + i*(Math.PI*2/3);
+    const rx = e.x + Math.cos(ang)*e.size*0.55;
+    const ry = (e.y - e.size*1.65) + Math.sin(ang)*e.size*0.22;
+    ctx.fillText(icon, rx, ry);
+  }
+  ctx.restore();
+}
+function drawGame(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  // sky
+  const grad = ctx.createLinearGradient(0,0,0,canvas.height);
+  grad.addColorStop(0,'#0a0018'); grad.addColorStop(1,'#1a0030');
+  ctx.fillStyle = grad; ctx.fillRect(0,0,canvas.width,canvas.height);
+
+  const camX = S.player.x - canvas.width*0.35;
+  ctx.save();
+  ctx.translate(-camX, 0);
+
+  // ground
+  ctx.fillStyle = '#1a0d33';
+  ctx.fillRect(camX-200, S.groundY, canvas.width+400, canvas.height);
+  ctx.fillStyle = '#3c1b75';
+  ctx.fillRect(camX-200, S.groundY, canvas.width+400, 4);
+
+  // boss
+  if (!S.boss.isDead){
+    const bossStunned = S.boss.stunnedUntil>performance.now();
+    ctx.fillStyle = bossStunned ? (S.boss.stunFormColor || '#8888ff') : '#ff3333';
+    ctx.fillRect(S.boss.x-S.boss.size/2, S.boss.y-S.boss.size*2, S.boss.size, S.boss.size*2);
+    ctx.fillStyle='#fff'; ctx.font='11px monospace'; ctx.textAlign='center';
+    ctx.fillText('BOSS', S.boss.x, S.boss.y-S.boss.size*2-8);
+    drawRadiationGlow(S.boss);
+    drawStunFx(S.boss);
+  }
+  // mobs
+  S.mobs.forEach(m=>{
+    if (m.isDead) return;
+    const mobStunned = m.stunnedUntil>performance.now();
+    ctx.fillStyle = mobStunned ? (m.stunFormColor || '#88ccff') : '#ff7700';
+    ctx.fillRect(m.x-m.size/2, m.y-m.size*1.6, m.size, m.size*1.6);
+    ctx.fillStyle='#fff'; ctx.font='9px monospace'; ctx.textAlign='center';
+    ctx.fillText('#'+m.id, m.x, m.y-m.size*1.6-6);
+    drawRadiationGlow(m);
+    drawStunFx(m);
+  });
+
+  // player
+  ctx.fillStyle = S.player.nuclearForm ? '#00ff88' : (S.player.transformed ? '#00ffee' : '#ffcc00');
+  ctx.fillRect(S.player.x-S.player.size/2, S.player.y-S.player.size*2, S.player.size, S.player.size*2);
+  if (S.player.blocking){
+    const blockFb = getFormBoost();
+    ctx.strokeStyle = blockFb ? blockFb.color : '#00ffff'; ctx.lineWidth=3;
+    ctx.beginPath(); ctx.arc(S.player.x, S.player.y-S.player.size, S.player.size*1.3, 0, Math.PI*2); ctx.stroke();
+  }
+  // Aura Robot Form: vòng năng lượng xanh dương xoay quanh người chơi
+  if (S.player.transformed && !S.player.nuclearForm){
+    const pulse = 1 + Math.sin(performance.now()/180)*0.08;
+    const cx = S.player.x, cy = S.player.y - S.player.size, r = S.player.size*1.7*pulse;
+    ctx.save();
+    // Aura bằng radial gradient (không dùng shadowBlur) — tránh hiệu ứng sọc/rạn khi vẽ liên tục mỗi frame
+    const grad = ctx.createRadialGradient(cx, cy, r*0.55, cx, cy, r);
+    grad.addColorStop(0, 'rgba(51,136,255,0)');
+    grad.addColorStop(0.82, 'rgba(51,136,255,0.30)');
+    grad.addColorStop(1, 'rgba(51,136,255,0)');
+    ctx.fillStyle = grad;
+    ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI*2); ctx.fill();
+    ctx.strokeStyle = 'rgba(80,180,255,0.8)';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.arc(cx, cy, r, 0, Math.PI*2);
+    ctx.stroke();
+    // Vòng cơ khí phụ — các mảnh vuông nhỏ xoay quanh giống bánh răng/robot
+    const spin = performance.now()/300;
+    for (let i=0;i<6;i++){
+      const ang = spin + i*(Math.PI/3);
+      const rx = cx + Math.cos(ang)*r;
+      const ry = cy + Math.sin(ang)*r*0.6;
+      ctx.fillStyle = '#7fd4ff';
+      ctx.save();
+      ctx.translate(rx, ry);
+      ctx.rotate(ang);
+      ctx.fillRect(-3, -3, 6, 6);
+      ctx.restore();
+    }
+    ctx.restore();
+  }
+  // Aura Nuclear Form: vòng phóng xạ xanh lá phát sáng mạnh + hạt phóng xạ bay lên
+  if (S.player.nuclearForm){
+    const pulse = 1 + Math.sin(performance.now()/140)*0.1;
+    const cx = S.player.x, cy = S.player.y - S.player.size;
+    const rOuter = S.player.size*2*pulse, rInner = S.player.size*1.3*pulse;
+    ctx.save();
+    // Aura phóng xạ bằng radial gradient — tránh hiệu ứng sọc/rạn do shadowBlur chồng nhiều lớp mỗi frame
+    const grad = ctx.createRadialGradient(cx, cy, rInner*0.4, cx, cy, rOuter);
+    grad.addColorStop(0, 'rgba(51,255,136,0.35)');
+    grad.addColorStop(0.55, 'rgba(51,255,136,0.18)');
+    grad.addColorStop(1, 'rgba(51,255,136,0)');
+    ctx.fillStyle = grad;
+    ctx.beginPath(); ctx.arc(cx, cy, rOuter, 0, Math.PI*2); ctx.fill();
+    ctx.strokeStyle = 'rgba(80,255,150,0.85)';
+    ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.arc(cx, cy, rInner, 0, Math.PI*2); ctx.stroke();
+    ctx.restore();
+    if (Math.random() < (GFX_MAX ? 0.95 : 0.5)){
+      spawnParticles(S.player.x + (Math.random()-0.5)*S.player.size*3, S.player.y - S.player.size*0.5, '#33ff88', 1);
+    }
+  }
+  if (HACKS.godmode){
+    // vòng bất tử xuyên map — vẽ vòng lớn phát sáng quanh người chơi (kill logic dùng bán kính riêng, không phụ thuộc kích thước vẽ)
+    const pulse = 1 + Math.sin(performance.now()/200)*0.06;
+    ctx.save();
+    // FIX SỌC: glow bằng lớp stroke mờ dày hơn thay vì shadowBlur
+    const gmR = canvas.width*0.42*pulse;
+    ctx.strokeStyle = '#ffee00';
+    ctx.lineWidth = 12;
+    ctx.globalAlpha = 0.3;
+    ctx.beginPath();
+    ctx.arc(S.player.x, S.player.y-S.player.size, gmR, 0, Math.PI*2);
+    ctx.stroke();
+    ctx.lineWidth = 5;
+    ctx.globalAlpha = 0.85;
+    ctx.beginPath();
+    ctx.arc(S.player.x, S.player.y-S.player.size, gmR, 0, Math.PI*2);
+    ctx.stroke();
+    ctx.globalAlpha = 1;
+    ctx.fillStyle = '#ffee00'; ctx.font='11px monospace'; ctx.textAlign='center';
+    ctx.fillText('☠️ VÒNG BẤT TỬ — CHẠM LÀ CHẾT', S.player.x, S.player.y-S.player.size*2-18);
+    ctx.restore();
+  }
+
+  // particles
+  // FIX LAG + SỌC: shadowBlur gọi lặp lại trên MỖI particle mỗi frame là nguyên nhân nặng nhất
+  // gây giật máy và rạn/sọc khi particle đông (đặc biệt bản GFX_MAX). Thay bằng viền sáng nhẹ
+  // quanh mỗi hạt (vẽ 1 hình to hơn mờ hơn phía dưới) — vẫn có cảm giác "phát sáng" nhưng rẻ hơn nhiều.
+  S.particles.forEach(p=>{
+    const ps = (p.size||6)/2;
+    ctx.fillStyle = p.color;
+    if (GFX_MAX){
+      ctx.globalAlpha = Math.max(0,p.life)*0.35;
+      ctx.fillRect(p.x-ps*1.8,p.y-ps*1.8,ps*3.6,ps*3.6);
+    }
+    ctx.globalAlpha = Math.max(0,p.life);
+    ctx.fillRect(p.x-ps,p.y-ps,ps*2,ps*2);
+  });
+  ctx.globalAlpha = 1;
+
+  // spiders (nhện nổ đang bay tới mục tiêu)
+  S.spiders.forEach(sp=>{
+    ctx.font='18px monospace'; ctx.textAlign='center';
+    ctx.fillText('🕷️', sp.x, sp.y);
+  });
+
+  // hiệu ứng chém/bắn/kéo/phi kiếm
+  drawFx();
+
+  // float texts
+  S.floatTexts.forEach(f=>{
+    ctx.globalAlpha = Math.max(0,f.life);
+    ctx.fillStyle = f.color; ctx.font='bold 16px monospace'; ctx.textAlign='center';
+    ctx.fillText(f.text, f.x, f.y);
+  });
+  ctx.globalAlpha = 1;
+
+  ctx.restore();
+}
+
+function updateParticles(dt){
+  S.particles.forEach(p=>{ p.x+=p.vx; p.y+=p.vy; p.vy+=0.3; p.life -= dt*1.5; });
+  S.particles = S.particles.filter(p=>p.life>0);
+  S.floatTexts.forEach(f=>{ f.y -= dt*40; f.life -= dt*0.8; });
+  S.floatTexts = S.floatTexts.filter(f=>f.life>0);
+}
+
+function gameLoop(now){
+  const rawDt = Math.min(0.5, (now - S.lastTime)/1000); // thời gian thực trôi qua, cap rộng 0.5s tránh dồn cục quá đà khi tab bị ẩn lâu
+  const dt = Math.min(0.05, rawDt); // dt cho vật lý/di chuyển — cap chặt để tránh xuyên tường khi giật khung hình
+  S.lastTime = now;
+  applyMovement(dt);
+  damageTick(dt, rawDt);
+  updateParticles(dt);
+  updateSpiders(dt);
+  updateFx(dt);
+  if (S.player.fCharging){
+    const fFb = getFormBoost();
+    const c1 = fFb ? fFb.color : '#ff5511';
+    const c2 = fFb ? fFb.color : '#ffaa33';
+    spawnParticles(S.player.x + S.player.facing*44, S.player.y - S.player.size*1.3, c1, 2);
+    spawnParticles(S.player.x + S.player.facing*70, S.player.y - S.player.size*1.1, c2, 1);
+  }
+  // passive rage regen from just fighting (slow trickle)
+  if (!HACKS.infrage){
+    if (S.player.rage1 < 100) addRage1(dt*1.4);
+    if (S.player.rage2 < 100) addRage2(dt*0.6);
+  }
+  drawGame();
+  requestAnimationFrame(gameLoop);
+}
+
+// ============================================================
+// INIT
+// ============================================================
+resize();
+loadSaveProgress();
+updatePlayerHpUI();
+updateRageUI();
+updateEnemyHpUI();
+updateZXCVVisibility();
+updateLockedSkillBtns();
+updateNuclearPassiveBtnState();
+addLog('🎮 GOD HUNTER V3 MAX — Trận chiến bắt đầu!');
+requestAnimationFrame(gameLoop);
+
+// Auto-save every 30s
+setInterval(manualSaveProgress, 30000);
+
+// Basic keep-awake (best effort)
+(function(){
+  if ('wakeLock' in navigator){
+    let wl=null;
+    async function req(){ try{ wl = await navigator.wakeLock.request('screen'); }catch(e){} }
+    req();
+    document.addEventListener('visibilitychange', ()=>{ if(document.visibilityState==='visible') req(); });
+  }
+})();
+</script>
+</body>
+</html>
